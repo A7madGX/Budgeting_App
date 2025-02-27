@@ -18,6 +18,10 @@ abstract class ChatState with _$ChatState {
     messages: messages ?? [],
     selectedExpenses: selectedExpenses ?? [],
   );
+
+  bool isExpenseSelected(Expense expense) {
+    return selectedExpenses.contains(expense);
+  }
 }
 
 enum SendMessageStatus { intial, loading, success, error }

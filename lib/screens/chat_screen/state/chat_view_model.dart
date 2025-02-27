@@ -86,4 +86,17 @@ class ChatViewModel extends Cubit<ChatState> {
       ),
     );
   }
+
+  void toggleExpenseSelection(Expense expense) {
+    final selectedExpenses = state.selectedExpenses;
+    final newSelectedExpenses =
+        selectedExpenses.contains(expense)
+            ? selectedExpenses.where((e) => e != expense).toList()
+            : [...selectedExpenses, expense];
+    emit(state.copyWith(selectedExpenses: newSelectedExpenses));
+  }
+
+  void deselectAllExpenses() {
+    emit(state.copyWith(selectedExpenses: []));
+  }
 }

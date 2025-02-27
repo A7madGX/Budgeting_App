@@ -1,8 +1,11 @@
 import 'package:budgeting_app/db/database_manager.dart';
-import 'package:budgeting_app/screens/chat_screen/chat_screen.dart';
+import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
+import 'package:budgeting_app/screens/expenses_screen/expenses_screen.dart';
 import 'package:budgeting_app/services/gemini/gemini_services.dart';
+import 'package:budgeting_app/states/expenses_crud_requests.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'firebase_options.dart';
 
@@ -26,9 +29,15 @@ class MyApp extends StatelessWidget {
       brightness: Brightness.dark,
     );
 
-    return MaterialApp(
-      theme: ThemeData.from(colorScheme: colorScheme),
-      home: ChatScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ExpensesCrudRequestsCubit()),
+        BlocProvider(create: (context) => ChatViewModel()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData.from(colorScheme: colorScheme),
+        home: ExpensesScreen(),
+      ),
     );
   }
 }
