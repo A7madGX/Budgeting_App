@@ -31,6 +31,16 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: const Center(child: Text('Welcome to the Budgeting App!')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final res = await geminiServices.prompt(query: 'Today I bought apples for 20, and took a bus for 15, please add these expenses.');
+
+          debugPrint('Gemini Response: $res');
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }

@@ -41,13 +41,12 @@ class DatabaseManager {
 class ExpensesTable {
   static const String table = 'expenses';
   static const String id = 'id';
-  static const String name = 'name';
   static const String amount = 'amount';
   static const String category = 'category';
   static const String description = 'description';
   static const String date = 'date';
 
-  static const List<String> columns = [id, name, amount, category, description, date];
+  static const List<String> columns = [id, amount, category, description, date];
   static const List<String> categories = ['Groceries', 'Transport', 'Entertainment', 'Health', 'Dining', 'Utilities', 'Other'];
 
   static const String createTable = '''
@@ -55,9 +54,8 @@ class ExpensesTable {
   ''';
 
   static const String schema = '''
-    TABLE: $table (
+    TABLE $table (
       $id: INTEGER PRIMARY KEY AUTOINCREMENT,
-      $name: TEXT,
       $amount: REAL,
       $category: TEXT,
       $description: TEXT,
