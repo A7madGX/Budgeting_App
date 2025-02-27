@@ -1,5 +1,6 @@
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
+import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
 import 'package:budgeting_app/widgets/shimmer_animated.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +132,57 @@ class GeminiChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    // final parsedParts = GeminiResponseParser(message).parse();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8.0,
+      children: [
+        GeminiEmbedCard(
+          padding: EdgeInsets.zero,
+          enableGlowAnimation: loading,
+          child: CircleAvatar(
+            radius: 15,
+            backgroundColor: context.colorScheme.surfaceContainerHigh,
+            child: GeminiLogo(enableAnimations: false, size: 17),
+          ),
+        ),
+        if (loading)
+          GeminiEmbedCard(
+            padding: EdgeInsets.zero,
+            child: Container(
+              padding:
+                  EdgeInsets.symmetric(horizontal: 8, vertical: 4) +
+                  EdgeInsets.only(right: 4),
+              decoration: ShapeDecoration(
+                shape: StadiumBorder(),
+                color: context.colorScheme.surfaceContainerLow,
+              ),
+              child: ShimmerAnimated(
+                child: Row(
+                  spacing: 8,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(
+                      constraints: BoxConstraints.tight(Size.square(16)),
+                      strokeWidth: 1.5,
+                      year2023: false,
+                    ),
+                    Text(
+                      message,
+                      style: context.textTheme.labelLarge?.copyWith(
+                        color: context.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        else
+          Placeholder(),
+      ],
+    );
   }
 }
 
@@ -157,8 +208,8 @@ class _InputSectionState extends State<InputSection> {
             boxShadow: [
               BoxShadow(
                 color: context.colorScheme.surface,
-                blurRadius: 12,
-                spreadRadius: 3,
+                blurRadius: 20,
+                spreadRadius: 15,
                 offset: Offset(0, -12),
               ),
             ],

@@ -34,4 +34,13 @@ class ShimmerAnimated extends StatelessWidget {
       child: child,
     );
   }
+
+  static Effect getShimmerEffect({Color? color}) {
+    return ShimmerEffect(
+      duration: 2.seconds,
+      delay: 500.ms,
+      color: color,
+      curve: Curves.easeInOut,
+    );
+  }
 }
