@@ -1,11 +1,17 @@
+import 'package:budgeting_app/db/database_manager.dart';
+import 'package:budgeting_app/services/gemini/gemini_services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
 
+final dbManager = DatabaseManager();
+final geminiServices = GeminiServices();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await dbManager.init();
   runApp(const MyApp());
 }
 

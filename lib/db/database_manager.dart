@@ -31,6 +31,11 @@ class DatabaseManager {
   Future<void> deleteExpense(int id) async {
     await _db.delete(ExpensesTable.table, where: '${ExpensesTable.id} = ?', whereArgs: [id]);
   }
+
+  Future<List<Map<String, dynamic>>> rawQuery(String query) async {
+    final results = await _db.rawQuery(query);
+    return results;
+  }
 }
 
 class ExpensesTable {
@@ -46,13 +51,17 @@ class ExpensesTable {
   static const List<String> categories = ['Groceries', 'Transport', 'Entertainment', 'Health', 'Dining', 'Utilities', 'Other'];
 
   static const String createTable = '''
-    CREATE TABLE $table (
-      $id INTEGER PRIMARY KEY AUTOINCREMENT,
-      $name TEXT,
-      $amount REAL,
-      $category TEXT,
-      $description TEXT,
-      $date TEXT
+    CREATE $schema
+  ''';
+
+  static const String schema = '''
+    TABLE: $table (
+      $id: INTEGER PRIMARY KEY AUTOINCREMENT,
+      $name: TEXT,
+      $amount: REAL,
+      $category: TEXT,
+      $description: TEXT,
+      $date: TEXT
     )
   ''';
 }
