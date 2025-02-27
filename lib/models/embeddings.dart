@@ -71,13 +71,13 @@ class Chart extends BaseEmbeddingModel {
 
 class Series {
   final String name;
-  final List<double> data;
+  final List<num> data;
 
   Series({required this.name, required this.data});
 
   factory Series.fromJson(Map<String, dynamic> json) {
     final name = json['name'] as String;
-    final data = (json['data'] as List).cast<double>();
+    final data = (json['data'] as List).cast<num>();
 
     return Series(name: name, data: data);
   }
