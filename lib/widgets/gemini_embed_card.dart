@@ -47,7 +47,7 @@ class _GeminiEmbedCardState extends State<GeminiEmbedCard>
   @override
   Widget build(BuildContext context) {
     final color1 = context.colorScheme.primary;
-    final color2 = context.colorScheme.tertiaryContainer;
+    final color2 = context.colorScheme.onTertiary;
 
     return AnimatedBuilder(
       animation: _borderController,

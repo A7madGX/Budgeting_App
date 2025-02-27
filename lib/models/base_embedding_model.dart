@@ -1,5 +1,4 @@
-import 'package:budgeting_app/models/chart_model.dart';
-import 'package:budgeting_app/models/expense_model.dart';
+import 'package:budgeting_app/models/embeddings.dart';
 
 class EmbeddingParser {
   final Map<String, dynamic> json;
@@ -18,5 +17,3 @@ class EmbeddingParser {
     };
   }
 }
-
-abstract class BaseEmbeddingModel {}

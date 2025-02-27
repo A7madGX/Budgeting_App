@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:budgeting_app/db/database_manager.dart';
+import 'package:budgeting_app/models/base_embedding_model.dart';
 import 'package:budgeting_app/services/gemini/functions.dart';
 import 'package:firebase_vertexai/firebase_vertexai.dart';
 
@@ -18,7 +19,11 @@ class GeminiServices {
       model: model.modelName,
       tools: [
         Tool.functionDeclarations([
-          FunctionDeclaration(_accessDatabaseFunction.identifier, _accessDatabaseFunction.description, parameters: _accessDatabaseFunction.parametersSchema),
+          FunctionDeclaration(
+            _accessDatabaseFunction.identifier,
+            _accessDatabaseFunction.description,
+            parameters: _accessDatabaseFunction.parametersSchema,
+          ),
         ]),
       ],
       systemInstruction: Content.system('''
@@ -40,7 +45,7 @@ class GeminiServices {
         To embed a chart, you can use a json code block like this:
         ```json
         {
-          "type": "chart",
+          "type": "${EmbeddingParser.chart}",
           "data": {
             "chartType": "line or bar or pie",
             "labels": ["label1", "label2", "label3", ...],
@@ -64,7 +69,7 @@ class GeminiServices {
         To embed an expense operation, you can use a json code block like this:
         ```json
         {
-          "type": "expenseOperation",
+          "type": "${EmbeddingParser.expenseOperation}",
           "data": [
             {
               "operationType": "read or add or update or delete",
@@ -104,30 +109,43 @@ class GeminiServices {
     return _handleResponse(chat: chat, response: initialResponse);
   }
 
-  Future<Content> _getContent({required String query, List<File>? images}) async {
+  Future<Content> _getContent({
+    required String query,
+    List<File>? images,
+  }) async {
     if (images == null) {
       return Content.text(query);
     }
 
     final textPart = TextPart(query);
-    final imageParts = [for (final image in images) InlineDataPart('image/jpeg', await image.readAsBytes())];
+    final imageParts = [
+      for (final image in images)
+        InlineDataPart('image/jpeg', await image.readAsBytes()),
+    ];
 
     return Content.multi([textPart, ...imageParts]);
   }
 
-  Future<String> _handleResponse({required ChatSession chat, required GenerateContentResponse response}) async {
+  Future<String> _handleResponse({
+    required ChatSession chat,
+    required GenerateContentResponse response,
+  }) async {
     if (response.functionCalls.isEmpty) {
       return response.text ?? 'Sorry, I could not process your query';
     }
 
-    final resolvedResponse = await _resolveFunctionCalls(response.functionCalls);
+    final resolvedResponse = await _resolveFunctionCalls(
+      response.functionCalls,
+    );
 
     final newResponse = await chat.sendMessage(resolvedResponse);
 
     return _handleResponse(chat: chat, response: newResponse);
   }
 
-  Future<Content> _resolveFunctionCalls(Iterable<FunctionCall> functionCalls) async {
+  Future<Content> _resolveFunctionCalls(
+    Iterable<FunctionCall> functionCalls,
+  ) async {
     final List<Map<String, dynamic>> functionCallResults = [];
 
     for (final functionCall in functionCalls) {
@@ -140,10 +158,16 @@ class GeminiServices {
     }
 
     if (functionCallResults.length == 1) {
-      return Content.functionResponse(_accessDatabaseFunction.identifier, functionCallResults.single);
+      return Content.functionResponse(
+        _accessDatabaseFunction.identifier,
+        functionCallResults.single,
+      );
     }
 
-    return Content.functionResponses([for (final result in functionCallResults) FunctionResponse(_accessDatabaseFunction.identifier, result)]);
+    return Content.functionResponses([
+      for (final result in functionCallResults)
+        FunctionResponse(_accessDatabaseFunction.identifier, result),
+    ]);
   }
 }
 

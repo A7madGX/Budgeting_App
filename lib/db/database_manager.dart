@@ -1,3 +1,4 @@
+import 'package:budgeting_app/constants.dart';
 import 'package:budgeting_app/models/expense_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -57,15 +58,7 @@ class ExpensesTable {
   static const String date = 'date';
 
   static const List<String> columns = [id, amount, category, description, date];
-  static const List<String> categories = [
-    'Groceries',
-    'Transport',
-    'Entertainment',
-    'Health',
-    'Dining',
-    'Utilities',
-    'Other',
-  ];
+  static final List<String> categories = categoryIcons.keys.toList();
 
   static const String createTable = '''
     CREATE $schema
