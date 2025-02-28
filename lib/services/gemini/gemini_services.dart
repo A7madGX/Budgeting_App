@@ -165,6 +165,9 @@ class GeminiServices {
         Crucial: Some queries may require combining multiple procedures. In such cases, simply go through the steps sequentially.
 
         Crucial: If no account is specified, avoid embeddings for expense operations and ask the user for the account.
+        A valid strategy if the user is specifying the name is to get all accounts and choose the best fitting name, or ask the user
+        to pick from them using read operations.
+        -Always double check the account ID from the database directly before doing any expense operations.
 
         5. Account CRUD Operations:
         For read/update/delete operations, first query the database to confirm data. Then, respond with suggestions using accountOperations embedding for user confirmation.
@@ -175,6 +178,7 @@ class GeminiServices {
         account to be created.****
 
 
+
         Response guidelines:
         - Provide the response in a helpful tone.
         - Avoid responding with nothing but embeddings.
@@ -183,7 +187,7 @@ class GeminiServices {
         - All SQL queries should be handled by the ${_accessDatabaseFunction.identifier} function.
 
         **Crucial**:
-        - Users don't understand jargon, code, or database terms. Don't mention IDs to them unless asked to.
+        - Users don't understand jargon, or database terms. Don't mention IDs to them unless asked to.
         - If a user wants to add expenses but doesn't have an account always ask about the account first without
         doing any expense operations embeddings, Smartly check for accounts and if there aren't any suggest to the user to add an account first.
         - Do not embed unless you can sensibly get or infer all required data, otherwise ask the user for more information.

@@ -211,6 +211,11 @@ class _InputSectionState extends State<InputSection> {
                         SendMessageButton(
                           controller: _controller,
                           images: _images,
+                          onMessageSent: (context) {
+                            setState(() {
+                              _images = [];
+                            });
+                          },
                         ),
                       ],
                     ),
@@ -228,7 +233,13 @@ class _InputSectionState extends State<InputSection> {
 class SendMessageButton extends StatelessWidget {
   final TextEditingController controller;
   final List<File>? images;
-  const SendMessageButton({super.key, required this.controller, this.images});
+  final void Function(BuildContext) onMessageSent;
+  const SendMessageButton({
+    super.key,
+    required this.controller,
+    this.images,
+    required this.onMessageSent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -256,5 +267,7 @@ class SendMessageButton extends StatelessWidget {
     );
 
     controller.clear();
+
+    onMessageSent(context);
   }
 }

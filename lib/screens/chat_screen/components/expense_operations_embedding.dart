@@ -2,6 +2,7 @@ import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/embeddings.dart';
 import 'package:budgeting_app/models/expense_model.dart';
+import 'package:budgeting_app/states/accounts/accounts_crud_requests.dart';
 import 'package:budgeting_app/states/expenses/expenses_crud_requests.dart';
 import 'package:budgeting_app/widgets/expense_list_item.dart';
 import 'package:budgeting_app/widgets/gemini_embed_card.dart';
@@ -235,19 +236,22 @@ Future<void> executeAdd({
   required BuildContext context,
   required Expense expense,
 }) async {
-  return context.read<ExpensesCrudRequestsCubit>().insertExpense(expense);
+  await context.read<ExpensesCrudRequestsCubit>().insertExpense(expense);
+  context.read<AccountsCrudRequestsCubit>().fetchAccounts();
 }
 
 Future<void> executeUpdate({
   required BuildContext context,
   required Expense expense,
 }) async {
-  return context.read<ExpensesCrudRequestsCubit>().updateExpense(expense);
+  await context.read<ExpensesCrudRequestsCubit>().updateExpense(expense);
+  context.read<AccountsCrudRequestsCubit>().fetchAccounts();
 }
 
 Future<void> executeDelete({
   required BuildContext context,
   required Expense expense,
 }) async {
-  return context.read<ExpensesCrudRequestsCubit>().deleteExpense(expense.id!);
+  await context.read<ExpensesCrudRequestsCubit>().deleteExpense(expense.id!);
+  context.read<AccountsCrudRequestsCubit>().fetchAccounts();
 }

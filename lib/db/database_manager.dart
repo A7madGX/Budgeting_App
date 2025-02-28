@@ -20,6 +20,12 @@ class DatabaseManager {
   // Expense operations
   Future<void> insertExpense(Expense expense) async {
     await _db.insert(ExpensesTable.table, expense.toMap());
+
+    // update account balance
+    final account = await getAccount(expense.accountId);
+    final newBalance =
+        account.balance + (expense.positive ? expense.amount : -expense.amount);
+    await updateAccount(account.copyWith(balance: newBalance));
   }
 
   Future<List<Expense>> getExpenses({
@@ -84,13 +90,32 @@ class DatabaseManager {
     return expenses;
   }
 
+  Future<Expense> getExpense(int id) async {
+    final results = await _db.query(
+      ExpensesTable.table,
+      where: '${ExpensesTable.id} = ?',
+      whereArgs: [id],
+    );
+    return Expense.fromMap(results.first);
+  }
+
   Future<void> updateExpense(Expense expense) async {
+    final oldExpense = await getExpense(expense.id!);
+
     await _db.update(
       ExpensesTable.table,
       expense.toMap(),
       where: '${ExpensesTable.id} = ?',
       whereArgs: [expense.id],
     );
+
+    // update account balance
+    final account = await getAccount(expense.accountId);
+    final newBalance =
+        account.balance +
+        (expense.positive ? expense.amount : -expense.amount) -
+        (oldExpense.positive ? oldExpense.amount : -oldExpense.amount);
+    await updateAccount(account.copyWith(balance: newBalance));
   }
 
   Future<void> deleteExpense(int id) async {
@@ -99,6 +124,12 @@ class DatabaseManager {
       where: '${ExpensesTable.id} = ?',
       whereArgs: [id],
     );
+
+    // update account balance
+    final expense = await getExpense(id);
+    final account = await getAccount(expense.accountId);
+    final newBalance =
+        account.balance - (expense.positive ? expense.amount : -expense.amount);
   }
 
   Future<void> insertExpenses(List<Expense> expenses) async {
@@ -107,6 +138,19 @@ class DatabaseManager {
       batch.insert(ExpensesTable.table, expense.toMap());
     }
     await batch.commit(noResult: true);
+
+    // update account balances
+    final accounts = await getAccounts();
+    for (final account in accounts) {
+      final accountExpenses = expenses.where((e) => e.accountId == account.id);
+      final newBalance =
+          account.balance +
+          accountExpenses.fold<double>(
+            0,
+            (prev, e) => prev + (e.positive ? e.amount : -e.amount),
+          );
+      await updateAccount(account.copyWith(balance: newBalance));
+    }
   }
 
   Future<void> deleteAllExpenses() async {
@@ -121,6 +165,15 @@ class DatabaseManager {
   Future<List<Account>> getAccounts() async {
     final results = await _db.query(AccountTable.table);
     return results.map((e) => Account.fromMap(e)).toList();
+  }
+
+  Future<Account> getAccount(int id) async {
+    final results = await _db.query(
+      AccountTable.table,
+      where: '${AccountTable.id} = ?',
+      whereArgs: [id],
+    );
+    return Account.fromMap(results.first);
   }
 
   Future<void> updateAccount(Account account) async {
@@ -146,6 +199,10 @@ class DatabaseManager {
       batch.insert(AccountTable.table, account.toMap());
     }
     await batch.commit(noResult: true);
+  }
+
+  Future<void> deleteAllAccounts() async {
+    await _db.delete(AccountTable.table);
   }
 
   Future<List<Map<String, dynamic>>> rawQuery(String query) async {
