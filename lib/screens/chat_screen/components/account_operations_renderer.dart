@@ -7,6 +7,7 @@ import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
 import 'package:budgeting_app/widgets/shimmer_animated.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_credit_card/u_credit_card.dart';
 
@@ -53,36 +54,46 @@ class _AccountOperationsRendererState extends State<AccountOperationsRenderer> {
           ),
         ),
         if (!allOperationsAreRead)
-          ApplyChangesButton(
-            onPressed: () async {
-              final futures = widget.operations.map((operation) {
-                switch (operation.type) {
-                  case OperationType.add:
-                    return executeAccountAdd(
-                      context: context,
-                      account: operation.account,
-                    );
-                  case OperationType.update:
-                    return executeAccountUpdate(
-                      context: context,
-                      account: operation.account,
-                    );
-                  case OperationType.delete:
-                    return executeAccountDelete(
-                      context: context,
-                      account: operation.account,
-                    );
-                  case OperationType.read:
-                    return Future.value();
-                }
-              });
+          AnimatedSize(
+            duration: 500.ms,
+            curve: Curves.easeInOut,
+            child: AnimatedSwitcher(
+              duration: 500.ms,
+              child:
+                  _hasExecutedOperations
+                      ? const SizedBox()
+                      : ApplyChangesButton(
+                        onPressed: () async {
+                          final futures = widget.operations.map((operation) {
+                            switch (operation.type) {
+                              case OperationType.add:
+                                return executeAccountAdd(
+                                  context: context,
+                                  account: operation.account,
+                                );
+                              case OperationType.update:
+                                return executeAccountUpdate(
+                                  context: context,
+                                  account: operation.account,
+                                );
+                              case OperationType.delete:
+                                return executeAccountDelete(
+                                  context: context,
+                                  account: operation.account,
+                                );
+                              case OperationType.read:
+                                return Future.value();
+                            }
+                          });
 
-              await Future.wait(futures);
+                          await Future.wait(futures);
 
-              setState(() {
-                _hasExecutedOperations = true;
-              });
-            },
+                          setState(() {
+                            _hasExecutedOperations = true;
+                          });
+                        },
+                      ),
+            ),
           ),
       ],
     );

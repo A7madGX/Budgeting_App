@@ -26,10 +26,50 @@ class DatabaseManager {
     bool ascending = false,
     int? accountId,
   }) async {
-    final where =
-        accountId != null ? '${ExpensesTable.accountId} = $accountId' : null;
-    final results = await _db.query(ExpensesTable.table, where: where);
-    final expenses = results.map((e) => Expense.fromMap(e)).toList();
+    final whereClause =
+        accountId != null
+            ? 'WHERE e.${ExpensesTable.accountId} = $accountId'
+            : '';
+
+    final query = '''
+      SELECT 
+        e.*, 
+        a.${AccountTable.id} as account_id,
+        a.${AccountTable.name} as account_name,
+        a.${AccountTable.balance} as account_balance,
+        a.${AccountTable.cardNumber} as account_cardNumber,
+        a.${AccountTable.expiryDate} as account_expiryDate,
+        a.${AccountTable.bankName} as account_bankName,
+        a.${AccountTable.holderName} as account_holderName
+      FROM ${ExpensesTable.table} e
+      LEFT JOIN ${AccountTable.table} a ON e.${ExpensesTable.accountId} = a.${AccountTable.id}
+      $whereClause
+    ''';
+
+    final results = await _db.rawQuery(query);
+
+    final expenses =
+        results.map((row) {
+          // Create account data map if account exists
+          final accountData =
+              row['account_id'] != null
+                  ? {
+                    AccountTable.id: row['account_id'],
+                    AccountTable.name: row['account_name'],
+                    AccountTable.balance: row['account_balance'],
+                    AccountTable.cardNumber: row['account_cardNumber'],
+                    AccountTable.expiryDate: row['account_expiryDate'],
+                    AccountTable.bankName: row['account_bankName'],
+                    AccountTable.holderName: row['account_holderName'],
+                  }
+                  : null;
+
+          // Create expense map with account data
+          final expenseMap = Map<String, dynamic>.from(row);
+          expenseMap['account_data'] = accountData;
+
+          return Expense.fromMap(expenseMap);
+        }).toList();
 
     if (ascending) {
       expenses.sort(

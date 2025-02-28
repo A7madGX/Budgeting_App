@@ -8,6 +8,7 @@ import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
 import 'package:budgeting_app/widgets/shimmer_animated.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpenseOperationsRenderer extends StatefulWidget {
@@ -44,36 +45,48 @@ class _ExpenseOperationsRendererState extends State<ExpenseOperationsRenderer> {
           ),
         ),
         if (!allOperationsAreRead)
-          ApplyChangesButton(
-            onPressed: () async {
-              final futures = widget.expenseOperations.map((operation) {
-                switch (operation.type) {
-                  case OperationType.add:
-                    return executeAdd(
-                      context: context,
-                      expense: operation.expense,
-                    );
-                  case OperationType.update:
-                    return executeUpdate(
-                      context: context,
-                      expense: operation.expense,
-                    );
-                  case OperationType.delete:
-                    return executeDelete(
-                      context: context,
-                      expense: operation.expense,
-                    );
-                  case OperationType.read:
-                    return Future.value();
-                }
-              });
+          AnimatedSize(
+            duration: 500.ms,
+            curve: Curves.easeInOut,
+            child: AnimatedSwitcher(
+              duration: 500.ms,
+              child:
+                  _hasExecutedOperations
+                      ? const SizedBox()
+                      : ApplyChangesButton(
+                        onPressed: () async {
+                          final futures = widget.expenseOperations.map((
+                            operation,
+                          ) {
+                            switch (operation.type) {
+                              case OperationType.add:
+                                return executeAdd(
+                                  context: context,
+                                  expense: operation.expense,
+                                );
+                              case OperationType.update:
+                                return executeUpdate(
+                                  context: context,
+                                  expense: operation.expense,
+                                );
+                              case OperationType.delete:
+                                return executeDelete(
+                                  context: context,
+                                  expense: operation.expense,
+                                );
+                              case OperationType.read:
+                                return Future.value();
+                            }
+                          });
 
-              await Future.wait(futures);
+                          await Future.wait(futures);
 
-              setState(() {
-                _hasExecutedOperations = true;
-              });
-            },
+                          setState(() {
+                            _hasExecutedOperations = true;
+                          });
+                        },
+                      ),
+            ),
           ),
       ],
     );

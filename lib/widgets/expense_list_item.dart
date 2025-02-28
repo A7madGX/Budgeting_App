@@ -143,6 +143,14 @@ class ExpenseListItemContent extends StatelessWidget {
               ),
             ],
           ),
+        if (expense.account != null)
+          Row(
+            spacing: 8,
+            children: [
+              Icon(Icons.account_balance_wallet_rounded, size: 16),
+              Text(expense.account!.name, style: context.textTheme.bodyMedium),
+            ],
+          ),
       ],
     );
   }

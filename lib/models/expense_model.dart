@@ -1,3 +1,5 @@
+import 'package:budgeting_app/models/account_model.dart';
+
 import '../db/database_manager.dart';
 
 class Expense {
@@ -8,6 +10,7 @@ class Expense {
   final String description;
   final String date;
   final int accountId;
+  final Account? account;
 
   Expense({
     this.id,
@@ -17,6 +20,7 @@ class Expense {
     required this.description,
     required this.date,
     required this.accountId,
+    this.account,
   });
 
   Map<String, dynamic> toMap() {
@@ -41,6 +45,10 @@ class Expense {
       description: map[ExpensesTable.description] as String,
       date: map[ExpensesTable.date] as String,
       accountId: map[ExpensesTable.accountId] as int,
+      account:
+          map['account_data'] != null
+              ? Account.fromMap(map['account_data'] as Map<String, dynamic>)
+              : null,
     );
   }
 
