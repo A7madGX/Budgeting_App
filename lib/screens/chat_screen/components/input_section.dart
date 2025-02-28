@@ -60,19 +60,6 @@ class _InputSectionState extends State<InputSection> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (hasSelectedContent)
-                      Row(
-                        spacing: 8.0,
-                        children: [
-                          if (expenses.isNotEmpty)
-                            _buildInfoTile(
-                              context: context,
-                              icon: Icons.receipt_long,
-                              count: expenses.length,
-                              heroTag: 'expenses',
-                            ),
-                        ],
-                      ),
                     TextField(
                       controller: _controller,
                       minLines: 3,
@@ -92,7 +79,44 @@ class _InputSectionState extends State<InputSection> {
                     ),
                     // new code
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        if (hasSelectedContent)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: context.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            margin: EdgeInsets.only(right: 8),
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                spacing: 4,
+                                children: [
+                                  Icon(
+                                    Icons.receipt_long,
+                                    color:
+                                        context.colorScheme.onPrimaryContainer,
+                                  ),
+                                  Text(
+                                    '${state.selectedExpenses.length}',
+                                    style: context.textTheme.labelLarge
+                                        ?.copyWith(
+                                          color:
+                                              context
+                                                  .colorScheme
+                                                  .onPrimaryContainer,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
                         _images.isNotEmpty
                             ? Wrap(
                               spacing: 8.0,
@@ -114,6 +138,7 @@ class _InputSectionState extends State<InputSection> {
                                       .toList(),
                             )
                             : SizedBox(),
+
                         Spacer(),
                         SmallCircularButton(
                           disabled: _images.length == 3,
