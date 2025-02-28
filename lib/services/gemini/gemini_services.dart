@@ -160,6 +160,7 @@ class GeminiServices {
         ****Never use database access to write data, the writing is always done by the app after user confirmation.****
         ****When adding a new expense that will be dated to the most recent date, you should use a SQL database function
         to get the current date and time.****
+        You can infer the expense category yourself based on the description and if its an income or an expense
 
         Crucial: Some queries may require combining multiple procedures. In such cases, simply go through the steps sequentially.
 

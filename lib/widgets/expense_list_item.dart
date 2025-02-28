@@ -97,7 +97,6 @@ class _ExpenseListItemContentState extends State<ExpenseListItemContent> {
   @override
   Widget build(BuildContext context) {
     final dateTime = DateTime.parse(widget.expense.date);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
