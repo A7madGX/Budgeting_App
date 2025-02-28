@@ -82,7 +82,8 @@ class GeminiServices {
               "${ExpensesTable.amount}": a valid double amount, not null,
               "${ExpensesTable.category}": A string, one of ${ExpensesTable.categories}, not null,
               "${ExpensesTable.description}": The description of the expense, not null,
-              "${ExpensesTable.date}": The date of the expense in ISO 8601 format, not null
+              "${ExpensesTable.date}": The date of the expense in ISO 8601 format, not null,
+              "${ExpensesTable.positive}": An Integer, 1 for true, 0 for false, not null
             },
             ...
           ]

@@ -64,6 +64,10 @@ class DatabaseManager {
     await batch.commit(noResult: true);
   }
 
+  Future<void> deleteAllExpenses() async {
+    await _db.delete(ExpensesTable.table);
+  }
+
   // Account operations
   Future<void> insertAccount(Account account) async {
     await _db.insert(AccountTable.table, account.toMap());
@@ -112,6 +116,7 @@ class ExpensesTable {
   static const String category = 'category';
   static const String description = 'description';
   static const String date = 'date';
+  static const String positive = 'positive';
 
   static const List<String> columns = [id, amount, category, description, date];
   static final List<String> categories = categoryIcons.keys.toList();
@@ -126,7 +131,8 @@ class ExpensesTable {
       $amount REAL,
       $category TEXT,
       $description TEXT,
-      $date TEXT
+      $date TEXT,
+      $positive INTEGER
     )
   ''';
 }
