@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/base_embedding_model.dart';
+import 'package:budgeting_app/models/chat_message.dart';
 import 'package:budgeting_app/models/embeddings.dart';
 import 'package:budgeting_app/screens/chat_screen/components/chart_renderer.dart';
 import 'package:budgeting_app/screens/chat_screen/components/expense_operations_embedding.dart';
+import 'package:budgeting_app/screens/chat_screen/components/picked_image_renderer.dart';
 import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
+import 'package:budgeting_app/widgets/expenses_count_label.dart';
 import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
 import 'package:budgeting_app/widgets/shimmer_animated.dart';
@@ -47,7 +50,7 @@ class _ChatViewState extends State<ChatView> {
             final message = chatMessages[index];
 
             return message.isUserMessage
-                ? UserChatBubble(message: message.message)
+                ? UserChatBubble(message: message)
                 : GeminiChatBubble(
                   loading: message.isLoading,
                   message: message.message,
@@ -62,7 +65,7 @@ class _ChatViewState extends State<ChatView> {
 class UserChatBubble extends StatelessWidget {
   const UserChatBubble({super.key, required this.message});
 
-  final String message;
+  final ChatMessage message;
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +80,29 @@ class UserChatBubble extends StatelessWidget {
             color: context.colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text(
-            message,
-            style: TextStyle(color: context.colorScheme.onPrimaryContainer),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
+            children: [
+              Text(
+                message.message,
+                style: TextStyle(color: context.colorScheme.onPrimaryContainer),
+              ),
+              if (message.images != null && message.images!.isNotEmpty ||
+                  message.expenses != null && message.expenses!.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    if (message.images != null && message.images!.isNotEmpty)
+                      for (final image in message.images!)
+                        PickedImageRenderer(image: image),
+                    if (message.expenses != null &&
+                        message.expenses!.isNotEmpty)
+                      ExpensesCountLabel(count: message.expenses!.length),
+                  ],
+                ),
+            ],
           ),
         ),
       ),

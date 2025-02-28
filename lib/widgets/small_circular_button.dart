@@ -31,7 +31,7 @@ class SmallCircularButton extends StatelessWidget {
                 context.colorScheme.onSecondary,
                 BlendMode.srcIn,
               ),
-              child: SizedBox.square(dimension: 32, child: icon),
+              child: SizedBox.square(dimension: 27, child: icon),
             ),
           ),
         ),
