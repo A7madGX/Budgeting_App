@@ -53,22 +53,75 @@ class _AccountExpensesListDataProvider extends StatelessWidget {
   }
 }
 
-class _AccountExpensesList extends StatelessWidget {
+class _AccountExpensesList extends StatefulWidget {
   final List<Expense> expenses;
   const _AccountExpensesList({required this.expenses});
 
   @override
+  State<_AccountExpensesList> createState() => _AccountExpensesListState();
+}
+
+class _AccountExpensesListState extends State<_AccountExpensesList> {
+  ExpenseFilter _currentFilter = ExpenseFilter.all;
+
+  @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: expenses.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final expense = expenses[index];
-        return ListItemContainer(
-          child: ExpenseListItemContent(expense: expense),
-        );
-      },
+    final filteredExpenses = _getFilteredExpenses();
+
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<ExpenseFilter>(
+                segments: const [
+                  ButtonSegment(value: ExpenseFilter.all, label: Text('All')),
+                  ButtonSegment(
+                    value: ExpenseFilter.expense,
+                    label: Text('Expenses'),
+                  ),
+                  ButtonSegment(
+                    value: ExpenseFilter.income,
+                    label: Text('Income'),
+                  ),
+                ],
+                selected: {_currentFilter},
+                onSelectionChanged: (Set<ExpenseFilter> newSelection) {
+                  setState(() {
+                    _currentFilter = newSelection.first;
+                  });
+                },
+              ),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverList.separated(
+            itemCount: filteredExpenses.length,
+            itemBuilder: (context, index) {
+              final expense = filteredExpenses[index];
+              return ListItemContainer(
+                child: ExpenseListItemContent(expense: expense),
+              );
+            },
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+          ),
+        ),
+      ],
     );
+  }
+
+  List<Expense> _getFilteredExpenses() {
+    switch (_currentFilter) {
+      case ExpenseFilter.all:
+        return widget.expenses;
+      case ExpenseFilter.expense:
+        return widget.expenses.where((expense) => !expense.positive).toList();
+      case ExpenseFilter.income:
+        return widget.expenses.where((expense) => expense.positive).toList();
+    }
   }
 }

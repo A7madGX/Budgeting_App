@@ -99,7 +99,15 @@ class ExpenseListItemContent extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: context.colorScheme.surfaceContainerHighest,
-              child: Icon(expenseCategoryIcons[expense.category]),
+              child: Icon(
+                expense.positive
+                    ? incomeCategoryIcons[expense.category]
+                    : expenseCategoryIcons[expense.category],
+                color:
+                    expense.positive
+                        ? context.colorScheme.primary
+                        : context.colorScheme.error,
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,10 +118,7 @@ class ExpenseListItemContent extends StatelessWidget {
                   style: context.textTheme.labelMedium,
                 ),
                 Text(
-                  NumberFormat.currency(
-                    locale: 'en_US',
-                    symbol: 'EGP ',
-                  ).format(expense.amount),
+                  '${expense.positive ? '+' : '-'}${NumberFormat.currency(locale: 'en_US', symbol: 'EGP ').format(expense.amount)}',
                   style: context.textTheme.labelLarge?.copyWith(
                     color: context.colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.w700,

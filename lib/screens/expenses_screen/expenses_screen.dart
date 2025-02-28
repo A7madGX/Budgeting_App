@@ -73,34 +73,91 @@ class _ExpensesListDataProvider extends StatelessWidget {
   }
 }
 
-class _ExpensesList extends StatelessWidget {
+class _ExpensesList extends StatefulWidget {
   final List<Expense> expenses;
   const _ExpensesList({required this.expenses});
 
   @override
+  State<_ExpensesList> createState() => _ExpensesListState();
+}
+
+enum ExpenseFilter { all, expense, income }
+
+class _ExpensesListState extends State<_ExpensesList> {
+  ExpenseFilter _currentFilter = ExpenseFilter.all;
+
+  @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: expenses.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final expense = expenses[index];
+    final filteredExpenses = _getFilteredExpenses();
 
-        return BlocBuilder<ChatViewModel, ChatState>(
-          builder: (context, state) {
-            final bool isSelected = state.isExpenseSelected(expense);
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<ExpenseFilter>(
+                segments: const [
+                  ButtonSegment(value: ExpenseFilter.all, label: Text('All')),
+                  ButtonSegment(
+                    value: ExpenseFilter.expense,
+                    label: Text('Expenses'),
+                  ),
+                  ButtonSegment(
+                    value: ExpenseFilter.income,
+                    label: Text('Income'),
+                  ),
+                ],
+                selected: {_currentFilter},
+                onSelectionChanged: (Set<ExpenseFilter> newSelection) {
+                  setState(() {
+                    _currentFilter = newSelection.first;
+                  });
+                },
+              ),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverList.separated(
+            itemCount: filteredExpenses.length,
+            itemBuilder: (context, index) {
+              final expense = filteredExpenses[index];
 
-            return ExpenseListItem(
-              expense: expense,
-              isSelected: isSelected,
-              onSelectionChanged: (bool isSelected) {
-                context.read<ChatViewModel>().toggleExpenseSelection(expense);
-              },
-            );
-          },
-        );
-      },
+              return BlocBuilder<ChatViewModel, ChatState>(
+                builder: (context, state) {
+                  final bool isSelected = state.isExpenseSelected(expense);
+
+                  return ExpenseListItem(
+                    expense: expense,
+                    isSelected: isSelected,
+                    onSelectionChanged: (bool isSelected) {
+                      context.read<ChatViewModel>().toggleExpenseSelection(
+                        expense,
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+          ),
+        ),
+      ],
     );
+  }
+
+  List<Expense> _getFilteredExpenses() {
+    switch (_currentFilter) {
+      case ExpenseFilter.all:
+        return widget.expenses;
+      case ExpenseFilter.expense:
+        return widget.expenses.where((expense) => !expense.positive).toList();
+      case ExpenseFilter.income:
+        return widget.expenses.where((expense) => expense.positive).toList();
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:budgeting_app/models/account_model.dart';
+import 'package:budgeting_app/screens/chat_screen/accounts_screen/account_expenses.dart';
 import 'package:budgeting_app/screens/chat_screen/components/account_operations_renderer.dart';
 import 'package:budgeting_app/screens/expenses_screen/expenses_screen.dart';
 import 'package:budgeting_app/states/accounts/accounts_crud_requests.dart';
@@ -69,11 +70,11 @@ class _AccountsList extends StatelessWidget {
             child: AccountCreditCard(account: account),
           ),
           onTap: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => ExpensesScreen(),
-            //   ),
-            // );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AccountExpensesScreen(account: account),
+              ),
+            );
           },
         );
       },
