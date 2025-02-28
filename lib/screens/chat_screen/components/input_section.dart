@@ -140,31 +140,68 @@ class _InputSectionState extends State<InputSection> {
 
                         Spacer(),
                         SmallCircularButton(
-                          onTap: (context) async {
-                            final files = await ImagePickerUtils.pickImages();
-                            if (files.isNotEmpty) {
-                              if (files.length > 3) {
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (context) => AlertDialog(
-                                        title: Text('Too many images'),
-                                        content: Text(
-                                          '3 images are allowed at most.',
-                                        ),
-                                      ),
+                          disabled: _images.length == 3,
+                          onTap: (context) {
+                            showModalBottomSheet(
+                              context: context,
+                              showDragHandle: true,
+                              builder: (context) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: Icon(Icons.camera_alt),
+                                      title: Text('Camera'),
+                                      onTap: () async {
+                                        final image =
+                                            await ImagePickerUtils.pickImageFromCamera();
+                                        if (image != null) {
+                                          setState(() {
+                                            _images.add(image);
+                                          });
+                                        }
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: Icon(Icons.photo),
+                                      title: Text('Gallery'),
+                                      onTap: () async {
+                                        final images =
+                                            await ImagePickerUtils.pickImages();
+                                        if (images.isNotEmpty) {
+                                          if (images.length > 3) {
+                                            setState(() {
+                                              _images = images.sublist(0, 3);
+                                            });
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text('Warning'),
+                                                  content: Text(
+                                                    'You can only select up to 3 images.',
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            setState(() {
+                                              while (_images.length < 3) {
+                                                _images.add(images.removeAt(0));
+                                              }
+                                            });
+                                          }
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 );
-                                setState(() {
-                                  _images = files.sublist(0, 3);
-                                });
-                                return;
-                              }
-                              setState(() {
-                                _images = files;
-                              });
-                            }
+                              },
+                            );
                           },
-                          icon: Icon(Icons.image_rounded),
+                          icon: Icon(Icons.add_rounded),
                         ),
                         SizedBox(width: 8),
                         SendMessageButton(
