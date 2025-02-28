@@ -11,7 +11,7 @@ class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
     _fetchExpenses();
   }
 
-  Future<void> updateExpenses(Expense expense) async {
+  Future<void> updateExpense(Expense expense) async {
     emit(state.copyWith(status: ExpenseRequestStatus.loading));
     try {
       await dbManager.updateExpense(expense);
@@ -48,7 +48,7 @@ class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
     emit(state.copyWith(status: ExpenseRequestStatus.loading));
 
     try {
-      final expenses = await dbManager.getExpenses();
+      final expenses = await dbManager.getExpenses(ascending: false);
       emit(
         state.copyWith(
           status: ExpenseRequestStatus.success,
