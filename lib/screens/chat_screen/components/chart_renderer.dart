@@ -86,6 +86,7 @@ class _LineChart extends StatelessWidget {
           ),
       ],
       legend: Legend(isVisible: true),
+      tooltipBehavior: TooltipBehavior(enable: true),
     );
   }
 }
@@ -98,6 +99,41 @@ class _BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return PageView(
+      children: [
+        _buildBarChart(context),
+        _buildRadialChart(context),
+        _buildDoughnutChart(context),
+      ],
+    );
+  }
+
+  Widget _buildRadialChart(BuildContext context) {
+    return SfCircularChart(
+      series: [
+        for (int i = 0; i < chartData.length; i++)
+          RadialBarSeries<RenderChartData, String>(
+            dataSource: chartData[i],
+            xValueMapper: (data, _) => data.label,
+            yValueMapper: (data, _) => data.value,
+            name: seriesNames[i],
+            cornerStyle: CornerStyle.bothCurve,
+            gap: '10%',
+            maximumValue: 100,
+            innerRadius: '30%',
+            radius: '100%',
+            dataLabelSettings: DataLabelSettings(
+              isVisible: true,
+              useSeriesColor: true,
+              labelPosition: ChartDataLabelPosition.outside,
+            ),
+          ),
+      ],
+      legend: Legend(isVisible: true),
+    );
+  }
+
+  Widget _buildBarChart(BuildContext context) {
     return SfCartesianChart(
       primaryXAxis: CategoryAxis(),
       primaryYAxis: NumericAxis(),
@@ -109,9 +145,33 @@ class _BarChart extends StatelessWidget {
             yValueMapper: (data, _) => data.value,
             name: seriesNames[i],
             color: generatePalette(context)[i],
+            spacing: 0.2,
           ),
       ],
       legend: Legend(isVisible: true),
+      tooltipBehavior: TooltipBehavior(enable: true),
+    );
+  }
+
+  Widget _buildDoughnutChart(BuildContext context) {
+    return SfCircularChart(
+      series: [
+        for (int i = 0; i < chartData.length; i++)
+          DoughnutSeries<RenderChartData, String>(
+            dataSource: chartData[i],
+            xValueMapper: (data, _) => data.label,
+            yValueMapper: (data, _) => data.value,
+            name: seriesNames[i],
+            dataLabelSettings: DataLabelSettings(
+              isVisible: true,
+              useSeriesColor: true,
+              labelPosition: ChartDataLabelPosition.outside,
+            ),
+            radius: '80%',
+          ),
+      ],
+      legend: Legend(isVisible: true),
+      tooltipBehavior: TooltipBehavior(enable: true),
     );
   }
 }
