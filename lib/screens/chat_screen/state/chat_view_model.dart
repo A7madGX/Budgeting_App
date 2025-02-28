@@ -21,7 +21,7 @@ class ChatViewModel extends Cubit<ChatState> {
     final userMessage = ChatMessage(isUserMessage: true, message: message);
     final loadingMessage = ChatMessage(
       isUserMessage: false,
-      message: 'Gemini is thinking',
+      message: 'Gemini is cooking 🥘🔥',
       isLoading: true,
     );
     emit(
