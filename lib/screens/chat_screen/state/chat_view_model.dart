@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:budgeting_app/main.dart';
 import 'package:budgeting_app/models/chat_message.dart';
 import 'package:budgeting_app/models/expense_model.dart';
@@ -12,13 +14,27 @@ class ChatViewModel extends Cubit<ChatState> {
   ChatViewModel({List<ChatMessage>? messages, List<Expense>? expenses})
     : super(ChatState.initial(messages: messages, selectedExpenses: expenses));
 
-  Future<void> sendMessage(String message, String queryContext) async {
-    _addUserMessage(message);
-    await _generateAndAddAIResponse(message, queryContext);
+  Future<void> sendMessage({
+    required String message,
+    required String queryContext,
+    required List<File>? images,
+  }) async {
+    _addUserMessage(message: message, images: images);
+    await _generateAndAddAIResponse(
+      message: message,
+      queryContext: queryContext,
+      images: images,
+    );
   }
 
-  void _addUserMessage(String message) {
-    final userMessage = ChatMessage(isUserMessage: true, message: message);
+  void _addUserMessage({required String message, List<File>? images}) {
+    final userMessage = ChatMessage(
+      isUserMessage: true,
+      message: message,
+      images: images,
+      expenses:
+          state.selectedExpenses.isNotEmpty ? state.selectedExpenses : null,
+    );
     final loadingMessage = ChatMessage(
       isUserMessage: false,
       message: 'Gemini is cooking 🥘🔥',
@@ -32,10 +48,11 @@ class ChatViewModel extends Cubit<ChatState> {
     );
   }
 
-  Future<void> _generateAndAddAIResponse(
-    String message,
-    String queryContext,
-  ) async {
+  Future<void> _generateAndAddAIResponse({
+    required String message,
+    required String queryContext,
+    List<File>? images,
+  }) async {
     final context =
         'Context: ${queryContext.isNotEmpty ? queryContext : 'None'}';
     final numberedChatLog = state.messages
@@ -48,6 +65,7 @@ class ChatViewModel extends Cubit<ChatState> {
     try {
       final response = await geminiServices.prompt(
         query: '$message\n$context\n$pastChatHistory',
+        images: images,
       );
       _addAISuccessResponse(response);
     } catch (e) {

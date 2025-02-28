@@ -4,6 +4,7 @@ import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/screens/chat_screen/components/picked_image_renderer.dart';
 import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
 import 'package:budgeting_app/utils/image_picker_utils.dart';
+import 'package:budgeting_app/widgets/expenses_count_label.dart';
 import 'package:budgeting_app/widgets/small_circular_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -60,19 +61,6 @@ class _InputSectionState extends State<InputSection> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (hasSelectedContent)
-                      Row(
-                        spacing: 8.0,
-                        children: [
-                          if (expenses.isNotEmpty)
-                            _buildInfoTile(
-                              context: context,
-                              icon: Icons.receipt_long,
-                              count: expenses.length,
-                              heroTag: 'expenses',
-                            ),
-                        ],
-                      ),
                     TextField(
                       controller: _controller,
                       minLines: 3,
@@ -92,10 +80,14 @@ class _InputSectionState extends State<InputSection> {
                     ),
                     // new code
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        if (hasSelectedContent)
+                          ExpensesCountLabel(count: expenses.length),
+
                         _images.isNotEmpty
                             ? Wrap(
-                              spacing: 8.0,
+                              spacing: 12.0,
                               children:
                                   _images
                                       .map(
@@ -109,21 +101,32 @@ class _InputSectionState extends State<InputSection> {
                                             ),
                                           ],
                                           child: Stack(
+                                            clipBehavior: Clip.none,
                                             children: [
                                               PickedImageRenderer(image: e),
                                               Positioned(
-                                                top: 0,
-                                                right: 0,
+                                                top: -8,
+                                                right: -8,
                                                 child: GestureDetector(
                                                   onTap: () {
                                                     setState(() {
                                                       _images.remove(e);
                                                     });
                                                   },
-                                                  child: Icon(
-                                                    size: 16,
-                                                    Icons.close,
-                                                    color: Colors.red,
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        context
+                                                            .colorScheme
+                                                            .secondaryContainer,
+                                                    radius: 12,
+                                                    child: Icon(
+                                                      size: 16,
+                                                      Icons.close,
+                                                      color:
+                                                          context
+                                                              .colorScheme
+                                                              .onSecondaryContainer,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -134,6 +137,7 @@ class _InputSectionState extends State<InputSection> {
                                       .toList(),
                             )
                             : SizedBox(),
+
                         Spacer(),
                         SmallCircularButton(
                           disabled: _images.length == 3,
@@ -200,7 +204,10 @@ class _InputSectionState extends State<InputSection> {
                           icon: Icon(Icons.add_rounded),
                         ),
                         SizedBox(width: 8),
-                        SendMessageButton(controller: _controller),
+                        SendMessageButton(
+                          controller: _controller,
+                          images: _images,
+                        ),
                       ],
                     ),
                   ],
@@ -212,43 +219,12 @@ class _InputSectionState extends State<InputSection> {
       },
     );
   }
-
-  Widget _buildInfoTile({
-    required BuildContext context,
-    required IconData icon,
-    required int count,
-    required String heroTag,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(4.0),
-      decoration: ShapeDecoration(
-        color: context.colorScheme.surfaceContainerHighest,
-        shape: StadiumBorder(),
-      ),
-      child: Row(
-        spacing: 4.0,
-        children: [
-          CircleAvatar(
-            radius: 15,
-            backgroundColor: context.colorScheme.secondary,
-            child: Icon(icon, size: 18, color: context.colorScheme.onSecondary),
-          ),
-          Text(
-            count.toString(),
-            style: context.textTheme.labelLarge?.copyWith(
-              color: context.colorScheme.onPrimaryContainer,
-            ),
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
-    );
-  }
 }
 
 class SendMessageButton extends StatelessWidget {
   final TextEditingController controller;
-  const SendMessageButton({super.key, required this.controller});
+  final List<File>? images;
+  const SendMessageButton({super.key, required this.controller, this.images});
 
   @override
   Widget build(BuildContext context) {
@@ -269,7 +245,11 @@ class SendMessageButton extends StatelessWidget {
       Selected expenses: [${expenses.map((e) => e.toMap()).join(', ')}],
     ''';
 
-    viewModel.sendMessage(message, contextText);
+    viewModel.sendMessage(
+      message: message,
+      queryContext: contextText,
+      images: images,
+    );
 
     controller.clear();
   }
