@@ -146,57 +146,61 @@ class _InputSectionState extends State<InputSection> {
                               context: context,
                               showDragHandle: true,
                               builder: (context) {
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ListTile(
-                                      leading: Icon(Icons.camera_alt),
-                                      title: Text('Camera'),
-                                      onTap: () async {
-                                        final image =
-                                            await ImagePickerUtils.pickImageFromCamera();
-                                        if (image != null) {
-                                          setState(() {
-                                            _images.add(image);
-                                          });
-                                        }
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: Icon(Icons.photo),
-                                      title: Text('Gallery'),
-                                      onTap: () async {
-                                        final images =
-                                            await ImagePickerUtils.pickImages();
-                                        if (images.isNotEmpty) {
-                                          if (images.length > 3) {
+                                return SafeArea(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        leading: Icon(Icons.camera_alt),
+                                        title: Text('Camera'),
+                                        onTap: () async {
+                                          final image =
+                                              await ImagePickerUtils.pickImageFromCamera();
+                                          if (image != null) {
                                             setState(() {
-                                              _images = images.sublist(0, 3);
-                                            });
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: Text('Warning'),
-                                                  content: Text(
-                                                    'You can only select up to 3 images.',
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          } else {
-                                            setState(() {
-                                              while (_images.length < 3) {
-                                                _images.add(images.removeAt(0));
-                                              }
+                                              _images.add(image);
                                             });
                                           }
                                           Navigator.pop(context);
-                                        }
-                                      },
-                                    ),
-                                  ],
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: Icon(Icons.photo),
+                                        title: Text('Gallery'),
+                                        onTap: () async {
+                                          final images =
+                                              await ImagePickerUtils.pickImages();
+                                          if (images.isNotEmpty) {
+                                            if (images.length > 3) {
+                                              setState(() {
+                                                _images = images.sublist(0, 3);
+                                              });
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: Text('Warning'),
+                                                    content: Text(
+                                                      'You can only select up to 3 images.',
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            } else {
+                                              setState(() {
+                                                while (_images.length < 3) {
+                                                  _images.add(
+                                                    images.removeAt(0),
+                                                  );
+                                                }
+                                              });
+                                            }
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             );

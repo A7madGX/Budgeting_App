@@ -1,6 +1,7 @@
 import 'package:budgeting_app/db/database_manager.dart';
 import 'package:budgeting_app/screens/home_screen/home_screen.dart';
 import 'package:budgeting_app/services/gemini/gemini_services.dart';
+import 'package:budgeting_app/states/accounts/accounts_crud_requests.dart';
 import 'package:budgeting_app/states/chat/chat_view_model.dart';
 import 'package:budgeting_app/states/expenses/expenses_crud_requests.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Brightness _theme = Brightness.light;
+  Brightness _theme = Brightness.dark;
   Color _primaryColor = Colors.blue;
 
   void _setTheme(Brightness theme) {
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ExpensesCrudRequestsCubit()),
+        BlocProvider(create: (context) => AccountsCrudRequestsCubit()),
         BlocProvider(create: (context) => ChatViewModel()),
       ],
       child: ThemeController(

@@ -6,6 +6,8 @@ class Account {
   final num balance;
   final String cardNumber;
   final String expiryDate;
+  final String bankName;
+  final String holderName;
 
   Account({
     this.id,
@@ -13,6 +15,8 @@ class Account {
     required this.balance,
     required this.cardNumber,
     required this.expiryDate,
+    required this.bankName,
+    required this.holderName,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,6 +26,8 @@ class Account {
       AccountTable.balance: balance,
       AccountTable.cardNumber: cardNumber,
       AccountTable.expiryDate: expiryDate,
+      AccountTable.bankName: bankName,
+      AccountTable.holderName: holderName,
     };
   }
 
@@ -33,6 +39,8 @@ class Account {
       balance: map[AccountTable.balance] as num,
       cardNumber: map[AccountTable.cardNumber] as String,
       expiryDate: map[AccountTable.expiryDate] as String,
+      bankName: map[AccountTable.bankName] as String,
+      holderName: map[AccountTable.holderName] as String,
     );
   }
 
@@ -43,6 +51,8 @@ class Account {
     num? balance,
     String? cardNumber,
     String? expiryDate,
+    String? bankName,
+    String? holderName,
   }) {
     return Account(
       id: id ?? this.id,
@@ -50,6 +60,8 @@ class Account {
       balance: balance ?? this.balance,
       cardNumber: cardNumber ?? this.cardNumber,
       expiryDate: expiryDate ?? this.expiryDate,
+      bankName: bankName ?? this.bankName,
+      holderName: holderName ?? this.holderName,
     );
   }
 }

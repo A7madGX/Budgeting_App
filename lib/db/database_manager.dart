@@ -138,6 +138,8 @@ class AccountTable {
   static const String balance = 'balance';
   static const String cardNumber = 'cardNumber';
   static const String expiryDate = 'expiryDate';
+  static const String bankName = 'bankName';
+  static const String holderName = 'holderName';
 
   static const List<String> columns = [
     id,
@@ -145,6 +147,8 @@ class AccountTable {
     balance,
     cardNumber,
     expiryDate,
+    bankName,
+    holderName,
   ];
 
   static const String createTable = '''
@@ -157,7 +161,9 @@ class AccountTable {
       $name TEXT,
       $balance REAL,
       $cardNumber TEXT,
-      $expiryDate TEXT
+      $expiryDate TEXT,
+      $bankName TEXT,
+      $holderName TEXT
     )
   ''';
 }

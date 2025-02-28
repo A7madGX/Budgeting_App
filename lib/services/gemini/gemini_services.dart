@@ -28,10 +28,15 @@ class GeminiServices {
       ],
       systemInstruction: Content.system('''
         You are a smart assistant for a simple expense tracking mobile application.
-        The app runs on an internal SQLite database which has a single table called expenses.
-        Here is the schema:
+        The app runs on an internal SQLite database which has:
 
+        table called expenses.
+        Here is the schema:
         ${ExpensesTable.schema}
+
+        table called accounts.
+        Here is the schema:
+        ${AccountTable.schema}
 
         You have access to the database and can execute SQL queries on it through the
         ${_accessDatabaseFunction.identifier} function.
@@ -74,10 +79,10 @@ class GeminiServices {
             {
               "operationType": "read or add or update or delete",
               "${ExpensesTable.id}": An integer ID, not included if operation is add,
-              "${ExpensesTable.amount}": a valid double
-              "${ExpensesTable.category}": A string, one of ${ExpensesTable.categories},
-              "${ExpensesTable.description}": The description of the expense,
-              "${ExpensesTable.date}": The date of the expense in ISO 8601 format
+              "${ExpensesTable.amount}": a valid double amount, not null,
+              "${ExpensesTable.category}": A string, one of ${ExpensesTable.categories}, not null,
+              "${ExpensesTable.description}": The description of the expense, not null,
+              "${ExpensesTable.date}": The date of the expense in ISO 8601 format, not null
             },
             ...
           ]
@@ -85,7 +90,32 @@ class GeminiServices {
         ```
         Note that these expense operations show up as suggestions to the user, and the user can choose to apply the changes
         or not. Never do these operations using SQL, the operation will be parsed through the JSON and handled in the app.
-        **IMPORTANT: All fields are required.**
+        **IMPORTANT: All fields are required except for add operation then id is null.**
+        If data is unclear, you can ask the user for more information.
+
+        To embed an account operation, you can use a json code block like this:
+        ```json
+        {
+          "type": "${EmbeddingParser.accountOperation}",
+          "data": [
+            {
+              "operationType": "read or add or update or delete",
+              "${AccountTable.id}": An integer ID, not included if operation is add,
+              "${AccountTable.name}": A string, not null,
+              "${AccountTable.balance}": a valid double, not null,
+              "${AccountTable.cardNumber}": A string of the last 4 digits of the card number, not null,
+              "${AccountTable.expiryDate}": The expiry date of the card in ISO 8601 format, not null,
+              "${AccountTable.bankName}": The name of the bank, not null,
+              "${AccountTable.holderName}": The name of the card holder, not null
+            },
+            ...
+          ]
+        }
+        ```
+        Note that these account operations show up as suggestions to the user, and the user can choose to apply the changes
+        or not. Never do these operations using SQL, the operation will be parsed through the JSON and handled in the app.
+        **IMPORTANT: All fields are required except for add operation then id is null.**
+        If data is unclear, you can ask the user for more information.
 
         General notes:
         Today is: ${DateTime.now().toIso8601String()}

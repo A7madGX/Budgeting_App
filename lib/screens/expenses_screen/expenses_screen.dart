@@ -18,25 +18,30 @@ class ExpensesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expenses'),
-        actions: [
-          IconButton(
-            icon: BlocSelector<ChatViewModel, ChatState, List<Expense>>(
-              selector: (state) => state.selectedExpenses,
-              builder: (context, selectedExpenses) {
-                return GeminiLogo(
-                  enableAnimations: selectedExpenses.isNotEmpty,
-                );
-              },
-            ),
-            onPressed: () {
-              NavigationController.of(context).goToChatScreen();
-            },
-          ),
-        ],
+        actions: [GeminiChatButton()],
       ),
       body: const _ExpensesListDataProvider(),
       floatingActionButton: ExpensesCounter(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class GeminiChatButton extends StatelessWidget {
+  const GeminiChatButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: BlocSelector<ChatViewModel, ChatState, List<Expense>>(
+        selector: (state) => state.selectedExpenses,
+        builder: (context, selectedExpenses) {
+          return GeminiLogo(enableAnimations: selectedExpenses.isNotEmpty);
+        },
+      ),
+      onPressed: () {
+        NavigationController.of(context).goToChatScreen();
+      },
     );
   }
 }

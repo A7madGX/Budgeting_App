@@ -7,9 +7,12 @@ import '../../models/expense_model.dart';
 part 'expenses_crud_requests.freezed.dart';
 
 class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
-  ExpensesCrudRequestsCubit() : super(ExpenseRequestState.initial()) {
+  ExpensesCrudRequestsCubit({this.accountId})
+    : super(ExpenseRequestState.initial()) {
     fetchExpenses();
   }
+
+  final int? accountId;
 
   Future<void> updateExpense(Expense expense) async {
     emit(state.copyWith(status: ExpenseRequestStatus.loading));

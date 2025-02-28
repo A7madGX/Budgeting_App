@@ -1,3 +1,4 @@
+import 'package:budgeting_app/screens/chat_screen/accounts_screen/accounts_screen.dart';
 import 'package:budgeting_app/screens/chat_screen/chat_screen.dart';
 import 'package:budgeting_app/screens/expenses_screen/expenses_screen.dart';
 import 'package:budgeting_app/screens/settings_screen/settings_screen.dart';
@@ -16,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const screens = [ExpensesScreen(), SettingsScreen()];
+    const screens = [ExpensesScreen(), AccountsScreen(), SettingsScreen()];
     return NavigationController(
       goToChatScreen: _goToChatScreen,
       goToHomeScreen: _goToHomeScreen,
@@ -40,6 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 NavigationDestination(
                   icon: Icon(Icons.attach_money_rounded),
                   label: 'Expenses',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.account_balance_wallet_rounded),
+                  label: 'Accounts',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.settings_rounded),

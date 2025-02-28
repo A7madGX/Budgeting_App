@@ -48,6 +48,8 @@ dependencies:
   syncfusion_flutter_charts: ^28.2.7
   image_picker: ^1.1.2
   flutter_popup_menu_button: ^0.0.1+5
+  flutter_credit_card: ^4.1.0
+  u_credit_card: ^1.4.0
 
 dev_dependencies:
   flutter_test:

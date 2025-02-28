@@ -1,3 +1,4 @@
+import 'package:budgeting_app/models/account_model.dart';
 import 'package:budgeting_app/models/expense_model.dart';
 
 sealed class BaseEmbeddingModel {}
@@ -99,5 +100,31 @@ enum ChartType {
       default:
         throw ArgumentError('Invalid ChartType: $value');
     }
+  }
+}
+
+class AccountOperation {
+  final Account account;
+  final OperationType type;
+
+  AccountOperation({required this.account, required this.type});
+
+  factory AccountOperation.fromMap(Map<String, dynamic> json) {
+    return AccountOperation(
+      account: Account.fromMap(json),
+      type: OperationType.fromString(json['operationType'] as String),
+    );
+  }
+}
+
+class AccountOperations extends BaseEmbeddingModel {
+  final List<AccountOperation> operations;
+
+  AccountOperations(this.operations);
+
+  factory AccountOperations.fromJson(List json) {
+    return AccountOperations(
+      json.map((e) => AccountOperation.fromMap(e)).toList(),
+    );
   }
 }
