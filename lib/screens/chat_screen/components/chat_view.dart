@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/base_embedding_model.dart';
 import 'package:budgeting_app/models/embeddings.dart';
+import 'package:budgeting_app/screens/chat_screen/components/chart_renderer.dart';
 import 'package:budgeting_app/screens/chat_screen/components/expense_operations_embedding.dart';
 import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
 import 'package:budgeting_app/widgets/gemini_embed_card.dart';
@@ -157,7 +158,7 @@ class GeminiChatBubble extends StatelessWidget {
                   ExpenseOperations() => ExpenseOperationsRenderer(
                     expenseOperations: parsed.operations,
                   ),
-                  Chart() => ColoredBox(color: Colors.blue),
+                  Chart() => ChartRenderer(chartData: parsed),
                 },
               );
             },
