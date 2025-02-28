@@ -2,7 +2,7 @@ import 'package:budgeting_app/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../models/expense_model.dart';
+import '../../models/expense_model.dart';
 
 part 'expenses_crud_requests.freezed.dart';
 

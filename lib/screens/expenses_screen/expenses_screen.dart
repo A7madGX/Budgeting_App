@@ -1,9 +1,9 @@
 import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/expense_model.dart';
-import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
 import 'package:budgeting_app/screens/home_screen/home_screen.dart';
-import 'package:budgeting_app/states/expenses_crud_requests.dart';
+import 'package:budgeting_app/states/chat/chat_view_model.dart';
+import 'package:budgeting_app/states/expenses/expenses_crud_requests.dart';
 import 'package:budgeting_app/widgets/expense_list_item.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
 import 'package:flutter/material.dart';

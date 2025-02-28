@@ -1,7 +1,7 @@
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/main.dart';
 import 'package:budgeting_app/services/db/database_stub_data_service.dart';
-import 'package:budgeting_app/states/expenses_crud_requests.dart';
+import 'package:budgeting_app/states/expenses/expenses_crud_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

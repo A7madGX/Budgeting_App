@@ -7,7 +7,7 @@ import 'package:budgeting_app/models/embeddings.dart';
 import 'package:budgeting_app/screens/chat_screen/components/chart_renderer.dart';
 import 'package:budgeting_app/screens/chat_screen/components/expense_operations_embedding.dart';
 import 'package:budgeting_app/screens/chat_screen/components/picked_image_renderer.dart';
-import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
+import 'package:budgeting_app/states/chat/chat_view_model.dart';
 import 'package:budgeting_app/widgets/expenses_count_label.dart';
 import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';

@@ -1,8 +1,8 @@
 import 'package:budgeting_app/db/database_manager.dart';
-import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
 import 'package:budgeting_app/screens/home_screen/home_screen.dart';
 import 'package:budgeting_app/services/gemini/gemini_services.dart';
-import 'package:budgeting_app/states/expenses_crud_requests.dart';
+import 'package:budgeting_app/states/chat/chat_view_model.dart';
+import 'package:budgeting_app/states/expenses/expenses_crud_requests.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

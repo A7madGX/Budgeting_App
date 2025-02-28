@@ -2,7 +2,7 @@ import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/embeddings.dart';
 import 'package:budgeting_app/models/expense_model.dart';
-import 'package:budgeting_app/states/expenses_crud_requests.dart';
+import 'package:budgeting_app/states/expenses/expenses_crud_requests.dart';
 import 'package:budgeting_app/widgets/expense_list_item.dart';
 import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
