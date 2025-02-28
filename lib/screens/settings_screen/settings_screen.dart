@@ -113,6 +113,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 Divider(height: 0),
                 LoadDataButton(),
+                ClearDataButton(),
               ],
             ),
           ],
@@ -175,6 +176,66 @@ class _LoadDataButtonState extends State<LoadDataButton> {
                   )
                   : const Icon(Icons.download_rounded),
               Text(isLoading ? 'Loading...' : 'Load Data'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ClearDataButton extends StatefulWidget {
+  const ClearDataButton({super.key});
+
+  @override
+  State<ClearDataButton> createState() => _ClearDataButtonState();
+}
+
+class _ClearDataButtonState extends State<ClearDataButton> {
+  Future<void>? _clearDataFuture;
+
+  Future<void> _clearData(BuildContext context) async {
+    await dbManager.deleteAllExpenses();
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data successfully cleared')),
+      );
+
+      context.read<ExpensesCrudRequestsCubit>().fetchExpenses();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _clearDataFuture,
+      builder: (context, snapshot) {
+        final isLoading = snapshot.connectionState == ConnectionState.waiting;
+
+        return ElevatedButton(
+          onPressed:
+              isLoading
+                  ? null
+                  : () {
+                    setState(() {
+                      _clearDataFuture = _clearData(context);
+                    });
+                  },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4,
+            children: [
+              isLoading
+                  ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      year2023: false,
+                    ),
+                  )
+                  : const Icon(Icons.delete_rounded),
+              Text(isLoading ? 'Clearing...' : 'Clear Data'),
             ],
           ),
         );

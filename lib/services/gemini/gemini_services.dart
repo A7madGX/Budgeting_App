@@ -78,6 +78,7 @@ class GeminiServices {
               "${ExpensesTable.category}": A string, one of ${ExpensesTable.categories},
               "${ExpensesTable.description}": The description of the expense,
               "${ExpensesTable.date}": The date of the expense in ISO 8601 format
+              "${ExpensesTable.positive}": An Integer, 1 for true, 0 for false
             },
             ...
           ]

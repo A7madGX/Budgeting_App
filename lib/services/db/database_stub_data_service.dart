@@ -61,6 +61,7 @@ class DatabaseStubDataService {
     usedCategoriesForDay.add(category);
 
     double amount = _getRealisticAmount(category);
+    bool positive = _random.nextBool();
     String description = _getRealisticDescription(category);
 
     return Expense(
@@ -68,6 +69,7 @@ class DatabaseStubDataService {
       category: category,
       description: description,
       date: date.toIso8601String().split('T')[0],
+      positive: positive,
     );
   }
 

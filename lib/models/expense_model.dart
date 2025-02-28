@@ -2,6 +2,7 @@ import '../db/database_manager.dart';
 
 class Expense {
   final int? id;
+  final bool positive;
   final num amount;
   final String category;
   final String description;
@@ -9,6 +10,7 @@ class Expense {
 
   Expense({
     this.id,
+    required this.positive,
     required this.amount,
     required this.category,
     required this.description,
@@ -22,6 +24,7 @@ class Expense {
       ExpensesTable.category: category,
       ExpensesTable.description: description,
       ExpensesTable.date: date,
+      ExpensesTable.positive: positive ? 1 : 0,
     };
   }
 
@@ -29,6 +32,7 @@ class Expense {
   factory Expense.fromMap(Map<String, dynamic> map) {
     return Expense(
       id: map[ExpensesTable.id] as int?,
+      positive: map[ExpensesTable.positive] as int == 1,
       amount: map[ExpensesTable.amount] as num,
       category: map[ExpensesTable.category] as String,
       description: map[ExpensesTable.description] as String,
@@ -43,6 +47,7 @@ class Expense {
     String? category,
     String? description,
     String? date,
+    bool? positive,
   }) {
     return Expense(
       id: id ?? this.id,
@@ -50,6 +55,7 @@ class Expense {
       category: category ?? this.category,
       description: description ?? this.description,
       date: date ?? this.date,
+      positive: positive ?? this.positive,
     );
   }
 }
