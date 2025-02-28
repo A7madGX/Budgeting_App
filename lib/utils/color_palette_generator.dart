@@ -1,6 +1,6 @@
 import 'dart:math' as Math;
 
-import 'package:ai_controlled_budgeting_app/extensions.dart';
+import 'package:budgeting_app/extensions.dart';
 import 'package:flutter/material.dart';
 
 List<Color> generatePalette(BuildContext context, {int count = 12}) {
