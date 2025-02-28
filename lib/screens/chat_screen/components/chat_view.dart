@@ -99,7 +99,10 @@ class UserChatBubble extends StatelessWidget {
                         PickedImageRenderer(image: image),
                     if (message.expenses != null &&
                         message.expenses!.isNotEmpty)
-                      ExpensesCountLabel(count: message.expenses!.length),
+                      ExpensesCountLabel(
+                        count: message.expenses!.length,
+                        invertColors: true,
+                      ),
                   ],
                 ),
             ],
