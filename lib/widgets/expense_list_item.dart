@@ -90,33 +90,47 @@ class ExpenseListItemContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateTime = DateTime.parse(expense.date);
 
-    return Row(
-      spacing: 16.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
-        CircleAvatar(
-          backgroundColor: context.colorScheme.surfaceContainerHighest,
-          child: Icon(categoryIcons[expense.category]),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          spacing: 16.0,
           children: [
-            Text(expense.category, style: context.textTheme.titleMedium),
-            Text(
-              DateFormat.yMMMMd().format(dateTime),
-              style: context.textTheme.labelMedium,
+            CircleAvatar(
+              backgroundColor: context.colorScheme.surfaceContainerHighest,
+              child: Icon(categoryIcons[expense.category]),
             ),
-            Text(
-              NumberFormat.currency(
-                locale: 'en_US',
-                symbol: 'EGP ',
-              ).format(expense.amount),
-              style: context.textTheme.labelLarge?.copyWith(
-                color: context.colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.w700,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(expense.category, style: context.textTheme.titleMedium),
+                Text(
+                  DateFormat.yMMMMd().format(dateTime),
+                  style: context.textTheme.labelMedium,
+                ),
+                Text(
+                  NumberFormat.currency(
+                    locale: 'en_US',
+                    symbol: 'EGP ',
+                  ).format(expense.amount),
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: context.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+        if (expense.description.isNotEmpty)
+          Row(
+            spacing: 8,
+            children: [
+              Icon(Icons.notes_rounded, size: 16),
+              Text(expense.description, style: context.textTheme.bodyMedium),
+            ],
+          ),
       ],
     );
   }
