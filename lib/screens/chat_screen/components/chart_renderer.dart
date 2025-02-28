@@ -76,6 +76,12 @@ class _LineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return PageView(
+      children: [_buildLineChart(context), _buildAreaChart(context)],
+    );
+  }
+
+  Widget _buildLineChart(BuildContext context) {
     return SfCartesianChart(
       primaryXAxis: CategoryAxis(),
       primaryYAxis: NumericAxis(),
@@ -87,6 +93,27 @@ class _LineChart extends StatelessWidget {
             yValueMapper: (data, _) => data.value,
             name: seriesNames[i],
             color: generatePalette(context)[i],
+          ),
+      ],
+      legend: Legend(isVisible: true),
+      tooltipBehavior: TooltipBehavior(enable: true),
+    );
+  }
+
+  Widget _buildAreaChart(BuildContext context) {
+    return SfCartesianChart(
+      primaryXAxis: CategoryAxis(),
+      primaryYAxis: NumericAxis(),
+      series: [
+        for (int i = 0; i < chartData.length; i++)
+          AreaSeries<RenderChartData, String>(
+            dataSource: chartData[i],
+            xValueMapper: (data, _) => data.label,
+            yValueMapper: (data, _) => data.value,
+            name: seriesNames[i],
+            color: generatePalette(context)[i],
+            borderColor: generatePalette(context)[i],
+            opacity: 0.35,
           ),
       ],
       legend: Legend(isVisible: true),
@@ -106,34 +133,48 @@ class _BarChart extends StatelessWidget {
     return PageView(
       children: [
         _buildBarChart(context),
-        _buildRadialChart(context),
-        _buildDoughnutChart(context),
+        _buildColumnChart(context),
+        _buildStackedColumnChart(context),
       ],
     );
   }
 
-  Widget _buildRadialChart(BuildContext context) {
-    return SfCircularChart(
+  Widget _buildStackedColumnChart(BuildContext context) {
+    return SfCartesianChart(
+      primaryXAxis: CategoryAxis(),
+      primaryYAxis: NumericAxis(),
       series: [
         for (int i = 0; i < chartData.length; i++)
-          RadialBarSeries<RenderChartData, String>(
+          StackedColumnSeries<RenderChartData, String>(
             dataSource: chartData[i],
             xValueMapper: (data, _) => data.label,
             yValueMapper: (data, _) => data.value,
             name: seriesNames[i],
-            cornerStyle: CornerStyle.bothCurve,
-            gap: '10%',
-            maximumValue: 100,
-            innerRadius: '30%',
-            radius: '100%',
-            dataLabelSettings: DataLabelSettings(
-              isVisible: true,
-              useSeriesColor: true,
-              labelPosition: ChartDataLabelPosition.outside,
-            ),
+            color: generatePalette(context)[i],
           ),
       ],
       legend: Legend(isVisible: true),
+      tooltipBehavior: TooltipBehavior(enable: true),
+    );
+  }
+
+  Widget _buildColumnChart(BuildContext context) {
+    return SfCartesianChart(
+      primaryXAxis: CategoryAxis(),
+      primaryYAxis: NumericAxis(),
+      series: [
+        for (int i = 0; i < chartData.length; i++)
+          ColumnSeries<RenderChartData, String>(
+            dataSource: chartData[i],
+            xValueMapper: (data, _) => data.label,
+            yValueMapper: (data, _) => data.value,
+            name: seriesNames[i],
+            color: generatePalette(context)[i],
+            spacing: 0.2,
+          ),
+      ],
+      legend: Legend(isVisible: true),
+      tooltipBehavior: TooltipBehavior(enable: true),
     );
   }
 
@@ -156,28 +197,6 @@ class _BarChart extends StatelessWidget {
       tooltipBehavior: TooltipBehavior(enable: true),
     );
   }
-
-  Widget _buildDoughnutChart(BuildContext context) {
-    return SfCircularChart(
-      series: [
-        for (int i = 0; i < chartData.length; i++)
-          DoughnutSeries<RenderChartData, String>(
-            dataSource: chartData[i],
-            xValueMapper: (data, _) => data.label,
-            yValueMapper: (data, _) => data.value,
-            name: seriesNames[i],
-            dataLabelSettings: DataLabelSettings(
-              isVisible: true,
-              useSeriesColor: true,
-              labelPosition: ChartDataLabelPosition.outside,
-            ),
-            radius: '80%',
-          ),
-      ],
-      legend: Legend(isVisible: true),
-      tooltipBehavior: TooltipBehavior(enable: true),
-    );
-  }
 }
 
 class _PieChart extends StatelessWidget {
@@ -187,6 +206,12 @@ class _PieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return PageView(
+      children: [_buildPieChart(context), _buildDoughnutChart(context)],
+    );
+  }
+
+  Widget _buildPieChart(BuildContext context) {
     return SfCircularChart(
       series: [
         PieSeries<RenderChartData, String>(
@@ -203,7 +228,32 @@ class _PieChart extends StatelessWidget {
           pointColorMapper:
               (data, _) => generatePalette(context)[chartData.indexOf(data)],
           explode: true,
-          radius: chartData.length > 3 ? '60%' : '80%',
+          radius: '60%',
+        ),
+      ],
+      legend: Legend(isVisible: true),
+    );
+  }
+
+  Widget _buildDoughnutChart(BuildContext context) {
+    return SfCircularChart(
+      series: [
+        DoughnutSeries<RenderChartData, String>(
+          dataSource: chartData,
+          xValueMapper: (data, _) => data.label,
+          yValueMapper: (data, _) => data.value,
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            useSeriesColor: true,
+            showCumulativeValues: true,
+            borderRadius: 8,
+            labelPosition: ChartDataLabelPosition.outside,
+          ),
+          pointColorMapper:
+              (data, _) => generatePalette(context)[chartData.indexOf(data)],
+          explode: true,
+          radius: '60%',
+          innerRadius: '80%',
         ),
       ],
       legend: Legend(isVisible: true),
