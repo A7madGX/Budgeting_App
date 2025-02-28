@@ -3,6 +3,7 @@ import 'package:budgeting_app/constants.dart';
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/expense_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 
 class ListItemContainer extends StatelessWidget {
@@ -81,77 +82,118 @@ class ExpenseListItem extends StatelessWidget {
   }
 }
 
-class ExpenseListItemContent extends StatelessWidget {
+class ExpenseListItemContent extends StatefulWidget {
   const ExpenseListItemContent({super.key, required this.expense});
 
   final Expense expense;
 
   @override
-  Widget build(BuildContext context) {
-    final dateTime = DateTime.parse(expense.date);
+  State<ExpenseListItemContent> createState() => _ExpenseListItemContentState();
+}
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
-      children: [
-        Row(
-          spacing: 16.0,
+class _ExpenseListItemContentState extends State<ExpenseListItemContent> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final dateTime = DateTime.parse(widget.expense.date);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        onTap: () {
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
           children: [
-            CircleAvatar(
-              backgroundColor: context.colorScheme.surfaceContainerHighest,
-              child: Icon(
-                expense.positive
-                    ? incomeCategoryIcons[expense.category]
-                    : expenseCategoryIcons[expense.category],
-                color:
-                    expense.positive
-                        ? context.colorScheme.primary
-                        : context.colorScheme.error,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              spacing: 16.0,
               children: [
-                Text(expense.category, style: context.textTheme.titleMedium),
-                Text(
-                  DateFormat.yMMMMd().format(dateTime),
-                  style: context.textTheme.labelMedium,
-                ),
-                Text(
-                  '${expense.positive ? '+' : '-'}${NumberFormat.currency(locale: 'en_US', symbol: 'EGP ').format(expense.amount)}',
-                  style: context.textTheme.labelLarge?.copyWith(
-                    color: context.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w700,
+                CircleAvatar(
+                  backgroundColor: context.colorScheme.surfaceContainerHighest,
+                  child: Icon(
+                    widget.expense.positive
+                        ? incomeCategoryIcons[widget.expense.category]
+                        : expenseCategoryIcons[widget.expense.category],
+                    color:
+                        widget.expense.positive
+                            ? context.colorScheme.primary
+                            : context.colorScheme.error,
                   ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.expense.category,
+                      style: context.textTheme.titleMedium,
+                    ),
+                    Text(
+                      DateFormat.yMMMMd().format(dateTime),
+                      style: context.textTheme.labelMedium,
+                    ),
+                    Text(
+                      '${widget.expense.positive ? '+' : '-'}${NumberFormat.currency(locale: 'en_US', symbol: 'EGP ').format(widget.expense.amount)}',
+                      style: context.textTheme.labelLarge?.copyWith(
+                        color: context.colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
+            AnimatedSize(
+              duration: 500.ms,
+              curve: Curves.easeInOut,
+              child: AnimatedSwitcher(
+                duration: 500.ms,
+                child:
+                    _isExpanded
+                        ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (widget.expense.description.isNotEmpty)
+                              Row(
+                                spacing: 8,
+                                children: [
+                                  Icon(Icons.notes_rounded, size: 16),
+                                  Expanded(
+                                    child: Text(
+                                      widget.expense.description,
+                                      style: context.textTheme.bodyMedium,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            if (widget.expense.account != null)
+                              Row(
+                                spacing: 8,
+                                children: [
+                                  Icon(Icons.credit_card_rounded, size: 16),
+                                  Text(
+                                    widget.expense.account!.name,
+                                    style: context.textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                          ],
+                        )
+                        : SizedBox(),
+              ),
+            ),
           ],
         ),
-        if (expense.description.isNotEmpty)
-          Row(
-            spacing: 8,
-            children: [
-              Icon(Icons.notes_rounded, size: 16),
-              Expanded(
-                child: Text(
-                  expense.description,
-                  style: context.textTheme.bodyMedium,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        if (expense.account != null)
-          Row(
-            spacing: 8,
-            children: [
-              Icon(Icons.account_balance_wallet_rounded, size: 16),
-              Text(expense.account!.name, style: context.textTheme.bodyMedium),
-            ],
-          ),
-      ],
+      ),
     );
   }
 }

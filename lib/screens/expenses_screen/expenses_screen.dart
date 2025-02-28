@@ -187,14 +187,29 @@ class ExpensesCounter extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(8),
-      child: Text(
-        '$count Expense(s) selected',
-        style: context.textTheme.labelLarge?.copyWith(
-          color: context.colorScheme.onPrimaryContainer,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Text(
+              '$count Expense(s) selected',
+              style: context.textTheme.labelLarge?.copyWith(
+                color: context.colorScheme.onPrimaryContainer,
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.close_rounded),
+            onPressed: () {
+              context.read<ChatViewModel>().deselectAllExpenses();
+            },
+          ),
+        ],
       ),
     );
   }
