@@ -192,18 +192,10 @@ class _InputSectionState extends State<InputSection> {
       child: Row(
         spacing: 4.0,
         children: [
-          Hero(
-            transitionOnUserGestures: true,
-            tag: heroTag,
-            child: CircleAvatar(
-              radius: 15,
-              backgroundColor: context.colorScheme.secondary,
-              child: Icon(
-                icon,
-                size: 18,
-                color: context.colorScheme.onSecondary,
-              ),
-            ),
+          CircleAvatar(
+            radius: 15,
+            backgroundColor: context.colorScheme.secondary,
+            child: Icon(icon, size: 18, color: context.colorScheme.onSecondary),
           ),
           Text(
             count.toString(),
