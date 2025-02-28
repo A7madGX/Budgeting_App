@@ -128,7 +128,12 @@ class ExpenseListItemContent extends StatelessWidget {
             spacing: 8,
             children: [
               Icon(Icons.notes_rounded, size: 16),
-              Text(expense.description, style: context.textTheme.bodyMedium),
+              Expanded(
+                child: Text(
+                  expense.description,
+                  style: context.textTheme.bodyMedium,
+                ),
+              ),
             ],
           ),
       ],
