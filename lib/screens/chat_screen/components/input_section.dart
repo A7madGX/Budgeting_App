@@ -108,7 +108,27 @@ class _InputSectionState extends State<InputSection> {
                                               duration: 0.5.seconds,
                                             ),
                                           ],
-                                          child: PickedImageRenderer(image: e),
+                                          child: Stack(
+                                            children: [
+                                              PickedImageRenderer(image: e),
+                                              Positioned(
+                                                top: 0,
+                                                right: 0,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _images.remove(e);
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    size: 16,
+                                                    Icons.close,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       )
                                       .toList(),
