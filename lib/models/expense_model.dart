@@ -7,6 +7,7 @@ class Expense {
   final String category;
   final String description;
   final String date;
+  final int accountId;
 
   Expense({
     this.id,
@@ -15,6 +16,7 @@ class Expense {
     required this.category,
     required this.description,
     required this.date,
+    required this.accountId,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class Expense {
       ExpensesTable.description: description,
       ExpensesTable.date: date,
       ExpensesTable.positive: positive ? 1 : 0,
+      ExpensesTable.accountId: accountId,
     };
   }
 
@@ -37,6 +40,7 @@ class Expense {
       category: map[ExpensesTable.category] as String,
       description: map[ExpensesTable.description] as String,
       date: map[ExpensesTable.date] as String,
+      accountId: map[ExpensesTable.accountId] as int,
     );
   }
 
@@ -48,6 +52,7 @@ class Expense {
     String? description,
     String? date,
     bool? positive,
+    int? accountId,
   }) {
     return Expense(
       id: id ?? this.id,
@@ -56,6 +61,7 @@ class Expense {
       description: description ?? this.description,
       date: date ?? this.date,
       positive: positive ?? this.positive,
+      accountId: accountId ?? this.accountId,
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const categoryIcons = {
+const expenseCategoryIcons = {
   'Groceries': Icons.shopping_cart,
   'Transport': Icons.directions_car,
   'Dining': Icons.restaurant,
@@ -9,5 +9,12 @@ const categoryIcons = {
   'Shopping': Icons.shopping_bag,
   'Healthcare': Icons.local_hospital,
   'Travel': Icons.flight,
+  'Miscellaneous': Icons.category,
+};
+
+const incomeCategoryIcons = {
+  'Salary': Icons.work,
+  'Investments': Icons.trending_up,
+  'Gifts': Icons.card_giftcard,
   'Miscellaneous': Icons.category,
 };

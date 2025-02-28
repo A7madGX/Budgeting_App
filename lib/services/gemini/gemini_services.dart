@@ -80,10 +80,11 @@ class GeminiServices {
               "operationType": "read or add or update or delete",
               "${ExpensesTable.id}": An integer ID, not included if operation is add,
               "${ExpensesTable.amount}": a valid double amount, not null,
-              "${ExpensesTable.category}": A string, one of ${ExpensesTable.categories}, not null,
+              "${ExpensesTable.category}": A string, one of ${ExpensesTable.expenseCategories} if it is an expense, or one of ${ExpensesTable.incomeCategories} if it is an income, not null,
               "${ExpensesTable.description}": The description of the expense, not null,
               "${ExpensesTable.date}": The date of the expense in ISO 8601 format, not null,
-              "${ExpensesTable.positive}": An Integer, 1 for true, 0 for false, not null
+              "${ExpensesTable.positive}": Whether this is income or expense. An Integer, 1 for income (true), 0 for expense (false), not null,
+              "${ExpensesTable.accountId}": An integer ID of the account, not null
             },
             ...
           ]

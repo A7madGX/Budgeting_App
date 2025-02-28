@@ -51,7 +51,10 @@ class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
     emit(state.copyWith(status: ExpenseRequestStatus.loading));
 
     try {
-      final expenses = await dbManager.getExpenses(ascending: false);
+      final expenses = await dbManager.getExpenses(
+        ascending: false,
+        accountId: accountId,
+      );
       emit(
         state.copyWith(
           status: ExpenseRequestStatus.success,

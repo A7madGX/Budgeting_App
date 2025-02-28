@@ -99,7 +99,7 @@ class ExpenseListItemContent extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: context.colorScheme.surfaceContainerHighest,
-              child: Icon(categoryIcons[expense.category]),
+              child: Icon(expenseCategoryIcons[expense.category]),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

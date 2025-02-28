@@ -22,8 +22,13 @@ class DatabaseManager {
     await _db.insert(ExpensesTable.table, expense.toMap());
   }
 
-  Future<List<Expense>> getExpenses({bool ascending = false}) async {
-    final results = await _db.query(ExpensesTable.table);
+  Future<List<Expense>> getExpenses({
+    bool ascending = false,
+    int? accountId,
+  }) async {
+    final where =
+        accountId != null ? '${ExpensesTable.accountId} = $accountId' : null;
+    final results = await _db.query(ExpensesTable.table, where: where);
     final expenses = results.map((e) => Expense.fromMap(e)).toList();
 
     if (ascending) {
@@ -117,9 +122,13 @@ class ExpensesTable {
   static const String description = 'description';
   static const String date = 'date';
   static const String positive = 'positive';
+  static const String accountId = 'accountId';
 
   static const List<String> columns = [id, amount, category, description, date];
-  static final List<String> categories = categoryIcons.keys.toList();
+  static final List<String> expenseCategories =
+      expenseCategoryIcons.keys.toList();
+  static final List<String> incomeCategories =
+      incomeCategoryIcons.keys.toList();
 
   static const String createTable = '''
     CREATE $schema
@@ -132,7 +141,8 @@ class ExpensesTable {
       $category TEXT,
       $description TEXT,
       $date TEXT,
-      $positive INTEGER
+      $positive INTEGER,
+      $accountId INTEGER
     )
   ''';
 }
