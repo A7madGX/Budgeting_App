@@ -57,6 +57,14 @@ class DatabaseManager {
     final results = await _db.rawQuery(query);
     return results;
   }
+
+  Future<void> insertExpenses(List<Expense> expenses) async {
+    final batch = _db.batch();
+    for (final expense in expenses) {
+      batch.insert(ExpensesTable.table, expense.toMap());
+    }
+    await batch.commit(noResult: true);
+  }
 }
 
 class ExpensesTable {

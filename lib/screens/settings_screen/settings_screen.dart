@@ -1,5 +1,6 @@
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/main.dart';
+import 'package:budgeting_app/services/db/database_stub_data_service.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -12,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          spacing: 8,
+          spacing: 48,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
@@ -70,9 +71,110 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
+            Column(
+              spacing: 8,
+              children: [
+                Row(
+                  spacing: 8,
+                  children: [
+                    Icon(Icons.language, size: 24),
+                    Text('Language', style: context.textTheme.titleMedium),
+                  ],
+                ),
+                Divider(height: 0),
+                Row(
+                  children: [
+                    Text('English', style: context.textTheme.titleSmall),
+                    const Spacer(),
+                    Checkbox(value: true, onChanged: (value) {}),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text('Arabic', style: context.textTheme.titleSmall),
+                    const Spacer(),
+                    Checkbox(value: false, onChanged: (value) {}),
+                  ],
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 8,
+              children: [
+                Row(
+                  spacing: 8,
+                  children: [
+                    Icon(Icons.info, size: 24),
+                    Text('Dev', style: context.textTheme.titleMedium),
+                  ],
+                ),
+                Divider(height: 0),
+                LoadDataButton(),
+              ],
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class LoadDataButton extends StatefulWidget {
+  const LoadDataButton({super.key});
+
+  @override
+  State<LoadDataButton> createState() => _LoadDataButtonState();
+}
+
+class _LoadDataButtonState extends State<LoadDataButton> {
+  Future<void>? _loadDataFuture;
+
+  Future<void> _loadData() async {
+    final stubService = DatabaseStubDataService(dbManager);
+    await stubService.generateStubData();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Stub data successfully generated')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _loadDataFuture,
+      builder: (context, snapshot) {
+        final isLoading = snapshot.connectionState == ConnectionState.waiting;
+
+        return ElevatedButton(
+          onPressed:
+              isLoading
+                  ? null
+                  : () {
+                    setState(() {
+                      _loadDataFuture = _loadData();
+                    });
+                  },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4,
+            children: [
+              isLoading
+                  ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      year2023: false,
+                    ),
+                  )
+                  : const Icon(Icons.download_rounded),
+              Text(isLoading ? 'Loading...' : 'Load Data'),
+            ],
+          ),
+        );
+      },
     );
   }
 }
