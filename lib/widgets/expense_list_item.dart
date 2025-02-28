@@ -125,10 +125,6 @@ class ExpenseListItemContent extends StatelessWidget {
         ),
         if (expense.description.isNotEmpty)
           Row(
-            crossAxisAlignment:
-                expense.description.length > 25
-                    ? CrossAxisAlignment.start
-                    : CrossAxisAlignment.center,
             spacing: 8,
             children: [
               Icon(Icons.notes_rounded, size: 16),
@@ -136,6 +132,8 @@ class ExpenseListItemContent extends StatelessWidget {
                 child: Text(
                   expense.description,
                   style: context.textTheme.bodyMedium,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
