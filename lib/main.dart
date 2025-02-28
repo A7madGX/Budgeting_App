@@ -19,14 +19,34 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Brightness _theme = Brightness.light;
+  Color _primaryColor = Colors.blue;
+
+  void _setTheme(Brightness theme) {
+    setState(() {
+      _theme = theme;
+    });
+  }
+
+  void _setPrimaryColor(Color color) {
+    setState(() {
+      _primaryColor = color;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Colors.blue,
-      brightness: Brightness.dark,
+      seedColor: _primaryColor,
+      brightness: _theme,
     );
 
     return MultiBlocProvider(
@@ -34,32 +54,38 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ExpensesCrudRequestsCubit()),
         BlocProvider(create: (context) => ChatViewModel()),
       ],
-      child: MaterialApp(
-        theme: ThemeData.from(colorScheme: colorScheme),
-        home: HomeScreen(),
+      child: ThemeController(
+        theme: _theme,
+        setTheme: _setTheme,
+        setPrimaryColor: _setPrimaryColor,
+        child: MaterialApp(
+          theme: ThemeData.from(colorScheme: colorScheme),
+          home: HomeScreen(),
+        ),
       ),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class ThemeController extends InheritedWidget {
+  final Brightness theme;
+  final void Function(Brightness) setTheme;
+  final void Function(Color) setPrimaryColor;
+
+  const ThemeController({
+    super.key,
+    required this.theme,
+    required this.setTheme,
+    required this.setPrimaryColor,
+    required super.child,
+  });
+
+  static ThemeController of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ThemeController>()!;
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(child: Text('Welcome to the Budgeting App!')),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final res = await geminiServices.prompt(
-            query:
-                'Today I bought apples for 20, and took a bus for 15, please add these expenses.',
-          );
-
-          debugPrint('Gemini Response: $res');
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+  bool updateShouldNotify(covariant ThemeController oldWidget) {
+    return theme != oldWidget.theme;
   }
 }
