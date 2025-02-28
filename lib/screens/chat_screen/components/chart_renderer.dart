@@ -1,3 +1,4 @@
+import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -48,18 +49,21 @@ class ChartRenderer extends StatelessWidget {
     }
 
     return AspectRatio(
-      aspectRatio: 1.5,
-      child: switch (chartData.type) {
-        ChartType.line => _LineChart(
-          chartData: renderChartDataList,
-          seriesNames: seriesNames,
-        ),
-        ChartType.bar => _BarChart(
-          chartData: renderChartDataList,
-          seriesNames: seriesNames,
-        ),
-        ChartType.pie => _PieChart(chartData: renderChartDataList.single),
-      },
+      aspectRatio: 1.1,
+      child: GeminiEmbedCard(
+        enableGlowAnimation: false,
+        child: switch (chartData.type) {
+          ChartType.line => _LineChart(
+            chartData: renderChartDataList,
+            seriesNames: seriesNames,
+          ),
+          ChartType.bar => _BarChart(
+            chartData: renderChartDataList,
+            seriesNames: seriesNames,
+          ),
+          ChartType.pie => _PieChart(chartData: renderChartDataList.single),
+        },
+      ),
     );
   }
 }
