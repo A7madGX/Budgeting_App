@@ -90,6 +90,7 @@ class _InputSectionState extends State<InputSection> {
                         disabledBorder: InputBorder.none,
                       ),
                     ),
+                    // new code
                     Row(
                       children: [
                         _images.isNotEmpty
