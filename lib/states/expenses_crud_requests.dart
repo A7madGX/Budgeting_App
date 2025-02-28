@@ -8,7 +8,7 @@ part 'expenses_crud_requests.freezed.dart';
 
 class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
   ExpensesCrudRequestsCubit() : super(ExpenseRequestState.initial()) {
-    _fetchExpenses();
+    fetchExpenses();
   }
 
   Future<void> updateExpense(Expense expense) async {
@@ -19,7 +19,7 @@ class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
     } catch (e) {
       emit(state.copyWith(status: ExpenseRequestStatus.error));
     }
-    await _fetchExpenses();
+    await fetchExpenses();
   }
 
   Future<void> insertExpense(Expense expense) async {
@@ -30,7 +30,7 @@ class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
     } catch (e) {
       emit(state.copyWith(status: ExpenseRequestStatus.error));
     }
-    await _fetchExpenses();
+    await fetchExpenses();
   }
 
   Future<void> deleteExpense(int id) async {
@@ -41,10 +41,10 @@ class ExpensesCrudRequestsCubit extends Cubit<ExpenseRequestState> {
     } catch (e) {
       emit(state.copyWith(status: ExpenseRequestStatus.error));
     }
-    await _fetchExpenses();
+    await fetchExpenses();
   }
 
-  Future<void> _fetchExpenses() async {
+  Future<void> fetchExpenses() async {
     emit(state.copyWith(status: ExpenseRequestStatus.loading));
 
     try {

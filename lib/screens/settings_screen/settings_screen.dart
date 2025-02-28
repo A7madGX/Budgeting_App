@@ -1,7 +1,9 @@
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/main.dart';
 import 'package:budgeting_app/services/db/database_stub_data_service.dart';
+import 'package:budgeting_app/states/expenses_crud_requests.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -130,13 +132,15 @@ class LoadDataButton extends StatefulWidget {
 class _LoadDataButtonState extends State<LoadDataButton> {
   Future<void>? _loadDataFuture;
 
-  Future<void> _loadData() async {
+  Future<void> _loadData(BuildContext context) async {
     final stubService = DatabaseStubDataService(dbManager);
     await stubService.generateStubData();
-    if (mounted) {
+    if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Stub data successfully generated')),
       );
+
+      context.read<ExpensesCrudRequestsCubit>().fetchExpenses();
     }
   }
 
@@ -153,7 +157,7 @@ class _LoadDataButtonState extends State<LoadDataButton> {
                   ? null
                   : () {
                     setState(() {
-                      _loadDataFuture = _loadData();
+                      _loadDataFuture = _loadData(context);
                     });
                   },
           child: Row(
