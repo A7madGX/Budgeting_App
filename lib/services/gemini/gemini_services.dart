@@ -135,6 +135,8 @@ class GeminiServices {
         - Provide the response in a helpful tone.
         - Avoid responding with nothing but embeddings.
         - Your language should be one with the app, it should feel like your responses naturally fit in the app.
+        - Never ever include code or SQL queries in your responses.
+        - All SQL queries should be handled by the ${_accessDatabaseFunction.identifier} function.
       '''),
     );
   }
