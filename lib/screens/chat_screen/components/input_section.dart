@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:budgeting_app/extensions.dart';
+import 'package:budgeting_app/screens/chat_screen/components/picked_image_renderer.dart';
 import 'package:budgeting_app/screens/chat_screen/state/chat_view_model.dart';
+import 'package:budgeting_app/utils/image_picker_utils.dart';
+import 'package:budgeting_app/widgets/small_circular_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -13,6 +19,7 @@ class InputSection extends StatefulWidget {
 
 class _InputSectionState extends State<InputSection> {
   final TextEditingController _controller = TextEditingController();
+  List<File> _images = [];
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +90,62 @@ class _InputSectionState extends State<InputSection> {
                         disabledBorder: InputBorder.none,
                       ),
                     ),
-                    SendMessageButton(controller: _controller),
+                    Row(
+                      children: [
+                        _images.isNotEmpty
+                            ? Wrap(
+                              spacing: 8.0,
+                              children:
+                                  _images
+                                      .map(
+                                        (e) => Animate(
+                                          effects: [
+                                            FadeEffect(duration: 0.5.seconds),
+                                            ShakeEffect(
+                                              hz: 4,
+                                              delay: 0.5.seconds,
+                                              duration: 0.5.seconds,
+                                            ),
+                                          ],
+                                          child: PickedImageRenderer(image: e),
+                                        ),
+                                      )
+                                      .toList(),
+                            )
+                            : SizedBox(),
+                        Spacer(),
+                        SmallCircularButton(
+                          disabled: _images.length == 3,
+                          onTap: (context) async {
+                            final files = await ImagePickerUtils.pickImages();
+                            if (files.isNotEmpty) {
+                              if (files.length > 3) {
+                                showDialog(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: Text('Too many images'),
+                                        content: Text(
+                                          '3 images are allowed at most.',
+                                        ),
+                                      ),
+                                );
+                                setState(() {
+                                  _images = files.sublist(0, 3);
+                                });
+                                return;
+                              }
+                              setState(() {
+                                _images = files;
+                              });
+                            }
+                          },
+                          icon: Icon(Icons.image_rounded),
+                        ),
+                        SizedBox(width: 8),
+                        SendMessageButton(controller: _controller),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -141,25 +203,9 @@ class SendMessageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      shape: CircleBorder(),
-      color: context.colorScheme.secondary,
-      child: InkWell(
-        customBorder: CircleBorder(),
-        onTap: () => sendMessage(context),
-        child: Padding(
-          padding: EdgeInsets.all(4.0),
-          child: SvgPicture.asset(
-            'assets/send.svg',
-            width: 24,
-            height: 24,
-            colorFilter: ColorFilter.mode(
-              context.colorScheme.onSecondary,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-      ),
+    return SmallCircularButton(
+      onTap: sendMessage,
+      icon: SvgPicture.asset('assets/send.svg'),
     );
   }
 
