@@ -20,10 +20,20 @@ class DatabaseManager {
   }
 
   Future<List<Expense>> getExpenses({bool ascending = false}) async {
-    final orderBy =
-        ascending ? '${ExpensesTable.date} ASC' : '${ExpensesTable.date} DESC';
-    final results = await _db.query(ExpensesTable.table, orderBy: orderBy);
-    return results.map((e) => Expense.fromMap(e)).toList();
+    final results = await _db.query(ExpensesTable.table);
+    final expenses = results.map((e) => Expense.fromMap(e)).toList();
+
+    if (ascending) {
+      expenses.sort(
+        (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
+      );
+    } else {
+      expenses.sort(
+        (a, b) => DateTime.parse(b.date).compareTo(DateTime.parse(a.date)),
+      );
+    }
+
+    return expenses;
   }
 
   Future<void> updateExpense(Expense expense) async {

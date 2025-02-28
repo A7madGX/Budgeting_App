@@ -1,10 +1,8 @@
-import 'package:budgeting_app/models/base_embedding_model.dart';
-
 import '../db/database_manager.dart';
 
 class Expense {
   final int? id;
-  final double amount;
+  final num amount;
   final String category;
   final String description;
   final String date;
@@ -31,7 +29,7 @@ class Expense {
   factory Expense.fromMap(Map<String, dynamic> map) {
     return Expense(
       id: map[ExpensesTable.id] as int?,
-      amount: map[ExpensesTable.amount] as double,
+      amount: map[ExpensesTable.amount] as num,
       category: map[ExpensesTable.category] as String,
       description: map[ExpensesTable.description] as String,
       date: map[ExpensesTable.date] as String,

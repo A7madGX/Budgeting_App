@@ -1,11 +1,14 @@
 import 'package:animated_switcher_plus/animated_switcher_plus.dart';
 import 'package:budgeting_app/extensions.dart';
 import 'package:budgeting_app/models/embeddings.dart';
+import 'package:budgeting_app/models/expense_model.dart';
+import 'package:budgeting_app/states/expenses_crud_requests.dart';
 import 'package:budgeting_app/widgets/expense_list_item.dart';
 import 'package:budgeting_app/widgets/gemini_embed_card.dart';
 import 'package:budgeting_app/widgets/gemini_logo.dart';
 import 'package:budgeting_app/widgets/shimmer_animated.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpenseOperationsRenderer extends StatefulWidget {
   const ExpenseOperationsRenderer({super.key, required this.expenseOperations});
@@ -41,32 +44,36 @@ class _ExpenseOperationsRendererState extends State<ExpenseOperationsRenderer> {
           ),
         ),
         if (!allOperationsAreRead)
-          GeminiEmbedCard(
-            enableGlowAnimation: !_hasExecutedOperations,
-            padding: EdgeInsets.zero,
-            borderRadius: 1000,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () {
-                setState(() {
-                  _hasExecutedOperations = true;
-                });
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 8,
-                children: [
-                  GeminiLogo(
-                    enableAnimations: true,
-                    color: context.colorScheme.primary,
-                    size: 18,
-                  ),
-                  ShimmerAnimated(child: const Text('Apply Changes')),
-                ],
-              ),
-            ),
+          ApplyChangesButton(
+            onPressed: () async {
+              final futures = widget.expenseOperations.map((operation) {
+                switch (operation.type) {
+                  case OperationType.add:
+                    return executeAdd(
+                      context: context,
+                      expense: operation.expense,
+                    );
+                  case OperationType.update:
+                    return executeUpdate(
+                      context: context,
+                      expense: operation.expense,
+                    );
+                  case OperationType.delete:
+                    return executeDelete(
+                      context: context,
+                      expense: operation.expense,
+                    );
+                  case OperationType.read:
+                    return Future.value();
+                }
+              });
+
+              await Future.wait(futures);
+
+              setState(() {
+                _hasExecutedOperations = true;
+              });
+            },
           ),
       ],
     );
@@ -178,4 +185,56 @@ class _ExpenseOperationsRendererState extends State<ExpenseOperationsRenderer> {
       ),
     );
   }
+}
+
+class ApplyChangesButton extends StatelessWidget {
+  const ApplyChangesButton({super.key, required this.onPressed});
+  final void Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return GeminiEmbedCard(
+      padding: EdgeInsets.zero,
+      borderRadius: 1000,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        onPressed: onPressed,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+          children: [
+            GeminiLogo(
+              enableAnimations: true,
+              color: context.colorScheme.primary,
+              size: 18,
+            ),
+            ShimmerAnimated(child: const Text('Apply Changes')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Future<void> executeAdd({
+  required BuildContext context,
+  required Expense expense,
+}) async {
+  return context.read<ExpensesCrudRequestsCubit>().insertExpense(expense);
+}
+
+Future<void> executeUpdate({
+  required BuildContext context,
+  required Expense expense,
+}) async {
+  return context.read<ExpensesCrudRequestsCubit>().updateExpense(expense);
+}
+
+Future<void> executeDelete({
+  required BuildContext context,
+  required Expense expense,
+}) async {
+  return context.read<ExpensesCrudRequestsCubit>().deleteExpense(expense.id!);
 }
